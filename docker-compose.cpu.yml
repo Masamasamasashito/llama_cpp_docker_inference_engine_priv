@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  llama-cpp-cpu:
+    image: ghcr.io/ggerganov/llama.cpp:latest
+    container_name: llama-cpp-cpu-server
+    ports:
+      - "${LLAMA_PORT:-8080}:8080"
+    volumes:
+      - ./models:/models:ro
+      - ./logs:/logs
+    environment:
+      - LLAMA_ARG_MODEL=/models/${LLAMA_MODEL_FILE}
+      - LLAMA_ARG_CTX_SIZE=${LLAMA_CTX_SIZE:-2048}
+      - LLAMA_ARG_N_PARALLEL=${LLAMA_N_PARALLEL:-1}
+    command: >
+      ./server
+      --model /models/${LLAMA_MODEL_FILE}
+      --host 0.0.0.0
+      --port ${LLAMA_PORT:-8080}
+      --ctx-size ${LLAMA_CTX_SIZE:-2048}
+      --n-parallel ${LLAMA_N_PARALLEL:-1}
+      --log-format text
+      --verbose
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+        reservations:
+          memory: 4G

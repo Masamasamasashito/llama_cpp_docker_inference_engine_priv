@@ -1,0 +1,50 @@
+services:
+  llama-cpp-gpu:
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./models:/models:ro
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+      # RTX4090最適化環境変数
+      - LLAMA_MODEL_FILE=${LLAMA_MODEL_FILE}
+      - LLAMA_N_GPU_LAYERS=${LLAMA_N_GPU_LAYERS:--1}
+      - LLAMA_CTX_SIZE=${LLAMA_CTX_SIZE:-32768}
+      - LLAMA_BATCH_SIZE=${LLAMA_BATCH_SIZE:-2048}
+      - LLAMA_UBATCH_SIZE=${LLAMA_UBATCH_SIZE:-1024}
+      - LLAMA_THREADS=${LLAMA_THREADS:-16}
+      - LLAMA_N_PARALLEL=${LLAMA_N_PARALLEL:-8}
+      - LLAMA_TEMP=${LLAMA_TEMP:-0.8}
+      - LLAMA_TOP_K=${LLAMA_TOP_K:-40}
+      - LLAMA_TOP_P=${LLAMA_TOP_P:-0.95}
+      - LLAMA_MIN_P=${LLAMA_MIN_P:-0.05}
+      - LLAMA_REPEAT_PENALTY=${LLAMA_REPEAT_PENALTY:-1.1}
+    command: >
+      -m /models/${LLAMA_MODEL_FILE}
+      --host 0.0.0.0
+      --port 8080
+      --n-gpu-layers 99
+      --ctx-size ${LLAMA_CTX_SIZE:-32768}
+      --batch-size ${LLAMA_BATCH_SIZE:-1024}
+      --ubatch-size ${LLAMA_UBATCH_SIZE:-512}
+      --threads ${LLAMA_THREADS:-16}
+      --threads-batch ${LLAMA_THREADS:-16}
+      --parallel ${LLAMA_N_PARALLEL:-8}
+      --temp ${LLAMA_TEMP:-0.8}
+      --top-k ${LLAMA_TOP_K:-40}
+      --top-p ${LLAMA_TOP_P:-0.95}
+      --min-p ${LLAMA_MIN_P:-0.05}
+      --repeat-penalty ${LLAMA_REPEAT_PENALTY:-1.1}
+      --cont-batching
+      --log-verbose
+      --mlock
+    restart: unless-stopped
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
