@@ -134,13 +134,7 @@ logs/       ← ログ
 docker-compose down
 ```
 
-### 9. WebUI
-
-```bash
-http://localhost:7860
-```
-
-### 10. よくあるハマり
+### 9. よくあるハマり
 
 #### ① GPU効かない
 
@@ -175,7 +169,7 @@ http://localhost:7860
 
 - LLAMA_N_GPU_LAYERS=35
 
-### 11. 実務視点の評価（重要）
+### 10. 実務視点の評価（重要）
 
 メリット
 
