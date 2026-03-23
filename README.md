@@ -73,10 +73,117 @@ cp .env.example .env
 # LLAMA_MODEL_FILE などを編集
 ```
 
-### 4. 実行（GPU版）
+### 4. 実行
 
 ```bash
-# ここに実行コマンドを記載
+# GPU
+docker-compose up -d
+
+# CPU
+docker-compose -f docker-compose.cpu.yml up -d
+
+# high
+docker-compose -f docker-compose.high.yml up -d
 ```
 
-<!-- 必要に応じてAPI使用例やスクリーンショット、詳細手順、FAQ等を今後追記してください -->
+### 5. 動作確認
+
+```bash
+# ヘルスチェック
+curl http://localhost:8080/health
+
+# モデル一覧
+curl http://localhost:8080/v1/models
+```
+
+### 6. 使い方
+
+```bash
+curl -X POST http://localhost:8080/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gemma3n-e2b-fixed.gguf",
+    "messages": [
+      {
+        "role": "user",
+        "content": "こんにちは、あなたは誰ですか？"
+      }
+    ]
+  }'
+```
+
+### 7. 構成
+
+```bash
+models/     ← モデル置く（必須）
+logs/       ← ログ
+.env        ← 設定
+```
+
+モード
+
+|モード|用途|
+|---|---|
+|GPU|普通|
+|CPU|検証用|
+|high|4090用|
+
+### 8. 停止
+
+```bash
+docker-compose down
+```
+
+### 9. WebUI
+
+```bash
+http://localhost:7860
+```
+
+### 10. よくあるハマり
+
+#### ① GPU効かない
+
+原因：
+
+- NVIDIA Container Toolkit未導入
+- CUDAバージョン不一致
+
+対策：
+
+- `nvidia-smi`がDocker内で動くか確認
+
+#### ② モデルロード失敗
+
+原因：
+
+- .env のファイル名ミス
+- パス違い
+
+確認：
+
+- `ls models/`
+
+#### ③ 遅い
+
+仮説：
+
+- CPU実行になってる
+- GPUレイヤー不足
+
+調整：
+
+- LLAMA_N_GPU_LAYERS=35
+
+### 11. 実務視点の評価（重要）
+
+メリット
+
+- Ollamaより柔軟
+- OpenAI互換APIで連携しやすい
+- Dockerなので再現性高い
+
+デメリット
+
+- モデル管理は手動
+- UIなし（完全API）
