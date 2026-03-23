@@ -14,6 +14,8 @@
 
 </div>
 
+Githubリポジトリ : https://github.com/Sunwood-ai-labs/llama-cpp-docker-compose
+
 # 🦙 Llama.cpp Docker Compose セットアップ
 
 WindowsでLlama.cppを簡単に動かすためのDocker Composeセットアップです。  
