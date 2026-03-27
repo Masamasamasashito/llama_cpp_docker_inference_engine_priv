@@ -16,8 +16,7 @@
 
 </div>
 
-> 参照元リポジトリ: [Sunwood-ai-labs/llama-cpp-docker-compose](https://github.com/Sunwood-ai-labs/llama-cpp-docker-compose)
-> （本リポジトリ LDIE は上記をベースに、命名規則・セキュリティ・OpenClaw連携・マルチモデル対応等を大幅に強化したものです）
+> LDIEは参照元リポジトリ: [Sunwood-ai-labs/llama-cpp-docker-compose](https://github.com/Sunwood-ai-labs/llama-cpp-docker-compose) をベースに、命名規則・セキュリティ・OpenClaw連携(Windows11Pro▶OpenClaw(Ubuntu24.04))・マルチモデル対応等しました
 
 ---
 
@@ -30,12 +29,13 @@ llama.cpp をDocker上で動かし、**OpenAI互換API**と**組み込みWebUI**
 
 - OpenAI互換API（`/v1/chat/completions`）でどんなクライアントからでも利用可能
 - **組み込みWebUI** — llama.cppサーバーにブラウザでアクセスするだけでチャット可能（ChatGPT風）
-- **OpenClaw連携** — LAN内の他PCのAIエージェントにローカルLLMを提供
-- Qwen3.5-27B / Qwen3.5-9B / Gemma 3n E2B 等のマルチモデル対応
+- **OpenClaw連携** — LAN内の他PC（Ubuntu 24.04）のAIエージェントにローカルLLMを提供
+- テキスト生成7モデル + 動画生成4モデル対応
 - RTX 5090最適化構成を含むGPU/CPU/High 3種のdocker-compose
-- [LDIE命名規則](DOCS/LDIE_NamingConvention.md) に基づく高品質な変数設計
+- [LDIE命名規則](DOCS/LDIE_NamingConvention.md) に基づく高品質な変数設計（[EdgeOptimizer](https://github.com/Masamasamasashito/EdgeOptimizer)パターン準拠）
 - `.env` だけでイメージバージョン・ポート・バインドアドレス・API Key等を一元管理
 - デフォルト `127.0.0.1` バインド + API Key認証によるセキュリティ設計
+- [モデルセキュリティ評価](DOCS/LDIE_ModelSecurityAssessment.md) に基づくリスク管理
 
 ---
 
@@ -73,14 +73,50 @@ RTX 5090（VRAM 32GB）をローカルLLM推論に使う際、既存ツールに
 
 ## 📖 ドキュメント
 
+### 利用ガイド
+
 | カテゴリ | 内容 | リンク |
 |---|---|---|
 | テキスト生成 LLM | llama.cpp + Docker によるテキスト生成 | [DOCS/text-llm/](DOCS/text-llm/README.md) |
 | 動画生成 | ComfyUI による動画生成 | [DOCS/video-generation/](DOCS/video-generation/README.md) |
-| OpenClaw連携 | 他PCのOpenClawにローカルLLMを提供 | [DOCS/openclaw-integration/](DOCS/openclaw-integration/README.md) |
+| OpenClaw連携 | 他PC(Ubuntu)のOpenClawにローカルLLMを提供 | [DOCS/openclaw-integration/](DOCS/openclaw-integration/README.md) |
+
+### リファレンス
+
+| カテゴリ | 内容 | リンク |
+|---|---|---|
 | LDIE 命名規則 | 環境変数・ファイルの命名規則 | [DOCS/LDIE_NamingConvention.md](DOCS/LDIE_NamingConvention.md) |
+| モデルセキュリティ評価 | リスク評価・脅威分析・採用判断基準 | [DOCS/LDIE_ModelSecurityAssessment.md](DOCS/LDIE_ModelSecurityAssessment.md) |
 
 詳細は [ドキュメント一覧](DOCS/README.md) を参照してください。
+
+---
+
+## 🤖 対応モデル一覧
+
+### テキスト生成（llama.cpp）
+
+| モデル | 用途 | サイズ(Q4_K_M) | リスク | .env.example |
+|---|---|---|---|---|
+| **Gemma 3 27B** | 日本語汎用（安全性最高） | 16.5GB | 低 | `.env.example.gemma3-27b` |
+| **Gemma 3n E2B** | 軽量テスト | — | 低 | `.env.example.gemma3n-e2b` |
+| **Qwen3.5-27B** | 日本語汎用 | 16.7GB | 中 | `.env.example.qwen3.5-27b` |
+| **Qwen3.5-9B** | 軽量・高速 | 5.68GB | 中 | `.env.example.qwen3.5-9b` |
+| **Qwen3-32B** | 最高品質 | 19.8GB | 中 | `.env.example.qwen3-32b` |
+| **Qwen3-Coder-30B** | コーディング特化 | 18.6GB | 中 | `.env.example.qwen3-coder-30b` |
+| **DeepSeek R1 32B** | 推論・分析 | 19.9GB | **高** | `.env.example.deepseek-r1-32b` |
+
+> リスク評価の詳細は [モデルセキュリティ評価](DOCS/LDIE_ModelSecurityAssessment.md) を参照。
+> OpenClawバックエンドには Gemma 3 27B または Qwen3.5-27B を推奨。DeepSeek R1 は非推奨。
+
+### 動画生成（ComfyUI）
+
+| モデル | 用途 | VRAM目安 | .env.example |
+|---|---|---|---|
+| **LTX-Video** | 最速 | ~8GB | `.env.example.ltx-video` |
+| **Wan 2.2 (14B)** | 最高品質 | ~16GB | `.env.example.wan-video-14b` |
+| **Wan 2.1 (1.3B)** | 軽量版 | ~8GB | `.env.example.wan-video-1.3b` |
+| **HunyuanVideo 1.5** | 人物特化 | ~16GB | `.env.example.hunyuanvideo-1.5` |
 
 ---
 
@@ -88,25 +124,32 @@ RTX 5090（VRAM 32GB）をローカルLLM推論に使う際、既存ツールに
 
 ```
 LDIE/
-├── models/                        # モデル(GGUF)ファイル配置用
-├── logs/                          # サーバーログ保存用
-├── example/                       # クライアントサンプルコード
-│   ├── test_request_gemma3n-e2b.py
-│   ├── test_request_qwen3.5-27b.py
-│   ├── test_request_qwen3.5-9b.py
-│   └── test_request_logprobs.py
+├── models/                            # モデル(GGUF)ファイル配置用
+├── logs/                              # サーバーログ保存用
+├── example/                           # テストリクエストスクリプト
+│   ├── test_request_gemma3-27b.py     # Gemma 3 27B
+│   ├── test_request_gemma3n-e2b.py    # Gemma 3n E2B
+│   ├── test_request_qwen3.5-27b.py    # Qwen3.5-27B
+│   ├── test_request_qwen3.5-9b.py     # Qwen3.5-9B
+│   ├── test_request_qwen3-32b.py      # Qwen3-32B
+│   ├── test_request_qwen3-coder-30b.py # Qwen3-Coder-30B
+│   ├── test_request_deepseek-r1-32b.py # DeepSeek R1 32B
+│   ├── test_request_ltx-video.py      # LTX-Video (ComfyUI)
+│   ├── test_request_wan-video-14b.py  # Wan 2.2 14B (ComfyUI)
+│   ├── test_request_wan-video-1.3b.py # Wan 2.1 1.3B (ComfyUI)
+│   ├── test_request_hunyuanvideo-1.5.py # HunyuanVideo 1.5 (ComfyUI)
+│   └── test_request_logprobs.py       # logprobs比較テスト
 ├── DOCS/
-│   ├── README.md                  # ドキュメントハブ
-│   ├── LDIE_NamingConvention.md   # 命名規則リファレンス
-│   ├── text-llm/                  # テキスト生成LLMドキュメント
-│   ├── video-generation/          # 動画生成ドキュメント
-│   └── openclaw-integration/      # OpenClaw連携ガイド
-├── .env.example.gemma3n-e2b       # Gemma 3n E2B 用テンプレート
-├── .env.example.qwen3.5-27b      # Qwen3.5-27B 用テンプレート
-├── .env.example.qwen3.5-9b       # Qwen3.5-9B 用テンプレート
-├── docker-compose.yml             # GPU版（デフォルト）
-├── docker-compose.cpu.yml         # CPU版
-├── docker-compose.high.yml        # RTX 5090向け高性能版
+│   ├── README.md                      # ドキュメントハブ
+│   ├── LDIE_NamingConvention.md       # 命名規則リファレンス
+│   ├── LDIE_ModelSecurityAssessment.md # モデルセキュリティ評価
+│   ├── text-llm/                      # テキスト生成LLMドキュメント
+│   ├── video-generation/              # 動画生成ドキュメント
+│   └── openclaw-integration/          # OpenClaw連携ガイド
+├── .env.example.*                     # モデル別環境変数テンプレート（11種）
+├── docker-compose.yml                 # GPU版（デフォルト）
+├── docker-compose.cpu.yml             # CPU版
+├── docker-compose.high.yml            # RTX 5090向け高性能版
 └── README.md
 ```
 
@@ -117,7 +160,7 @@ LDIE/
 ### 1. リポジトリのクローン
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Masamasamasashito/llama_cpp_docker_inference_engine_priv.git
 cd llama_cpp_docker_inference_engine_priv
 ```
 
@@ -126,32 +169,31 @@ cd llama_cpp_docker_inference_engine_priv
 `models/` ディレクトリにGGUFファイルを配置します。
 
 ```bash
-# Qwen3.5-27B（16.7GB, 推奨）
+# Gemma 3 27B（16.5GB, 安全性最高・推奨）
+curl -L -o models/gemma-3-27b-it-Q4_K_M.gguf \
+  https://huggingface.co/unsloth/gemma-3-27b-it-GGUF/resolve/main/gemma-3-27b-it-Q4_K_M.gguf
+
+# Qwen3.5-27B（16.7GB, 日本語汎用）
 curl -L -o models/Qwen3.5-27B-Q4_K_M.gguf \
   https://huggingface.co/unsloth/Qwen3.5-27B-GGUF/resolve/main/Qwen3.5-27B-Q4_K_M.gguf
 
-# Qwen3.5-9B（5.68GB, 軽量）
+# Qwen3.5-9B（5.68GB, 軽量・高速）
 curl -L -o models/Qwen3.5-9B-Q4_K_M.gguf \
   https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/Qwen3.5-9B-Q4_K_M.gguf
-
-# Gemma 3n E2B
-curl -L -o models/gemma3n-e2b-fixed.gguf \
-  https://huggingface.co/unsloth/gemma-3n-E2B-it-GGUF/resolve/main/gemma-3n-E2B-it-UD-Q4_K_XL.gguf
 ```
+
+> 全モデルのダウンロードURLは各 `.env.example.*` ファイルの冒頭に記載されています。
 
 ### 3. 環境変数の設定
 
 使いたいモデルの `.env.example.*` をコピーして `.env` を作成します。
 
 ```bash
+# Gemma 3 27B の場合（安全性最高・推奨）
+cp .env.example.gemma3-27b .env
+
 # Qwen3.5-27B の場合
 cp .env.example.qwen3.5-27b .env
-
-# Qwen3.5-9B の場合
-cp .env.example.qwen3.5-9b .env
-
-# Gemma 3n E2B の場合
-cp .env.example.gemma3n-e2b .env
 ```
 
 > `.env.example.*` はセクション構造化されています。
@@ -217,7 +259,7 @@ curl -X POST http://localhost:8081/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -d '{
-    "model": "Qwen3.5-27B-Q4_K_M",
+    "model": "gemma-3-27b-it-Q4_K_M",
     "messages": [
       {"role": "user", "content": "こんにちは、あなたは誰ですか？"}
     ]
@@ -225,8 +267,8 @@ curl -X POST http://localhost:8081/v1/chat/completions \
 ```
 
 ```bash
-# Pythonサンプル
-python example/test_request_qwen3.5-27b.py
+# Pythonテストリクエスト
+python example/test_request_gemma3-27b.py
 ```
 
 ### 8. 停止
@@ -255,9 +297,11 @@ docker-compose down
 |---|---|
 | バインドアドレス | デフォルト `127.0.0.1`（ローカルのみ）。LAN公開時はプライベートIPを明示指定 |
 | API Key認証 | `--api-key` によるBearer Token認証 |
-| ファイアウォール | 特定プライベートIPのみ許可（OpenClaw連携時） |
+| ファイアウォール | Ubuntu PCのプライベートIPのみ許可（OpenClaw連携時） |
+| モデルリスク管理 | [セキュリティ評価](DOCS/LDIE_ModelSecurityAssessment.md) に基づくモデル選定 |
 
-詳細は [OpenClaw連携 - ネットワーク設定](DOCS/openclaw-integration/network_config.md) を参照してください。
+> LDIE構成では脅威の大半はUbuntu（OpenClaw）側に集中します。Windows（LLMサーバー）側はDocker隔離+多層防御で比較的安全です。
+> 詳細は [モデルセキュリティ評価](DOCS/LDIE_ModelSecurityAssessment.md) および [ネットワーク設定](DOCS/openclaw-integration/network_config.md) を参照してください。
 
 ---
 
@@ -274,7 +318,7 @@ docker-compose down
 
 ---
 
-### メリット・デメリット
+## メリット・デメリット
 
 **メリット**
 
@@ -283,6 +327,7 @@ docker-compose down
 - Dockerなので再現性が高い
 - 組み込みWebUIでブラウザからすぐチャット可能
 - `.env` だけで全設定を一元管理（LDIE命名規則）
+- モデルのセキュリティリスクを評価・管理できるドキュメント付き
 
 **デメリット**
 
