@@ -18,8 +18,19 @@ Githubリポジトリ : https://github.com/Sunwood-ai-labs/llama-cpp-docker-comp
 
 # 🦙 Llama.cpp Docker Compose セットアップ
 
-WindowsでLlama.cppを簡単に動かすためのDocker Composeセットアップです。  
+WindowsでLlama.cppを簡単に動かすためのDocker Composeセットアップです。
 WebUIはオプションで利用可能、APIサーバーのみの運用も可能です。
+
+---
+
+## 📖 ドキュメント
+
+| カテゴリ | 内容 | リンク |
+|---|---|---|
+| テキスト生成 LLM | llama.cpp + Docker によるテキスト生成 | [DOCS/text-llm/](DOCS/text-llm/README.md) |
+| 動画生成 | ComfyUI による動画生成 | [DOCS/video-generation/](DOCS/video-generation/README.md) |
+
+詳細は [ドキュメント一覧](DOCS/README.md) を参照してください。
 
 ---
 
@@ -27,14 +38,21 @@ WebUIはオプションで利用可能、APIサーバーのみの運用も可能
 
 ```
 llama-cpp-docker-compose/
-├── models/           # モデル(GGUF)ファイル配置用
-├── logs/             # サーバーログ保存用
-├── webui-data/       # WebUI用データ（WebUI利用時のみ）
-├── .env.example.*    # モデル別環境変数サンプル
-├── .gitignore
-├── docker-compose.yml
-├── docker-compose.cpu.yml
-├── docker-compose.gpu.yml
+├── models/                  # モデル(GGUF)ファイル配置用
+├── logs/                    # サーバーログ保存用
+├── example/                 # クライアントサンプルコード
+├── DOCS/
+│   ├── README.md            # ドキュメントハブ
+│   ├── text-llm/            # テキスト生成LLMドキュメント
+│   │   ├── setup_guide.md
+│   │   └── available_models.md
+│   └── video-generation/    # 動画生成ドキュメント
+│       ├── setup_guide.md
+│       └── available_models.md
+├── .env.example.*           # モデル別環境変数サンプル
+├── docker-compose.yml       # GPU版（デフォルト）
+├── docker-compose.cpu.yml   # CPU版
+├── docker-compose.high.yml  # RTX 5090向け
 └── README.md
 ```
 
