@@ -38,7 +38,7 @@ cp .env.example.qwen3.5-27b .env
 cp .env.example.qwen3.5-9b .env
 
 # Gemma 3n E2B の場合（既存）
-cp .env.example .env
+cp .env.example.gemma3n-e2b .env
 ```
 
 ---

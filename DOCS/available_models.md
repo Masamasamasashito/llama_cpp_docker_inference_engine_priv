@@ -82,7 +82,7 @@
 | モデル名 | Gemma 3n E2B |
 | 推奨量子化 | Q4_K_XL |
 | HuggingFace | https://huggingface.co/unsloth/gemma-3n-E2B-it-GGUF |
-| env設定ファイル | `.env.example` |
+| env設定ファイル | `.env.example.gemma3n-e2b` |
 | クライアント例 | `example/client_sample.py` |
 
 ---

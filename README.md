@@ -30,7 +30,7 @@ llama-cpp-docker-compose/
 ├── models/           # モデル(GGUF)ファイル配置用
 ├── logs/             # サーバーログ保存用
 ├── webui-data/       # WebUI用データ（WebUI利用時のみ）
-├── .env.example      # 環境変数サンプル
+├── .env.example.*    # モデル別環境変数サンプル
 ├── .gitignore
 ├── docker-compose.yml
 ├── docker-compose.cpu.yml
@@ -66,11 +66,17 @@ curl -L -o gemma3n-e2b-fixed.gguf https://huggingface.co/unsloth/gemma-3n-E2B-it
 
 ### 3. 環境変数の設定
 
-`.env.example`をコピーして`.env`を作成し、モデルファイル名などを設定してください。
+使いたいモデルの`.env.example.*`をコピーして`.env`を作成してください。
 
 ```bash
-cp .env.example .env
-# LLAMA_MODEL_FILE などを編集
+# Gemma 3n E2B の場合
+cp .env.example.gemma3n-e2b .env
+
+# Qwen3.5-27B の場合
+cp .env.example.qwen3.5-27b .env
+
+# Qwen3.5-9B の場合
+cp .env.example.qwen3.5-9b .env
 ```
 
 ### 4. 実行
