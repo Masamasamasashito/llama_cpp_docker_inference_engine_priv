@@ -87,6 +87,38 @@
 
 ---
 
+## RTX 5090 おすすめモデル一覧
+
+RTX 5090（VRAM 32GB / 帯域 1,792GB/s）で快適に動作するモデルの比較です。
+Q4_K_M量子化基準。性能値は参考値であり、コンテキスト長や設定により変動します。
+
+| モデル | パラメータ | Q4_K_Mサイズ | 生成速度(tok/s) | 特徴 | HuggingFace |
+|---|---|---|---|---|---|
+| **Qwen3.5-27B** | 27B | 16.7GB | ~55 | 汎用・高性能。本リポジトリ対応済み | [unsloth/Qwen3.5-27B-GGUF](https://huggingface.co/unsloth/Qwen3.5-27B-GGUF) |
+| **Qwen3.5-9B** | 9B | 5.68GB | ~213 | 軽量・高速。本リポジトリ対応済み | [unsloth/Qwen3.5-9B-GGUF](https://huggingface.co/unsloth/Qwen3.5-9B-GGUF) |
+| **Gemma 3 27B** | 27B | ~17GB | ~50 | Google製。128Kコンテキスト、140言語対応 | [unsloth/gemma-3-27b-it-GGUF](https://huggingface.co/unsloth/gemma-3-27b-it-GGUF) |
+| **Qwen3-32B** | 32B | ~18-20GB | ~61 | RTX 5090で最も人気。汎用・高品質 | [unsloth/Qwen3-32B-GGUF](https://huggingface.co/unsloth/Qwen3-32B-GGUF) |
+| **DeepSeek R1 32B** | 32B | ~18-20GB | ~64 | 推論・デバッグに強い。ステップバイステップ思考 | [unsloth/DeepSeek-R1-Distill-Qwen-32B-GGUF](https://huggingface.co/unsloth/DeepSeek-R1-Distill-Qwen-32B-GGUF) |
+| **Qwen3-Coder-30B** | 30B MoE | ~17GB | ~110 | コーディング特化。MoEで高速 | [unsloth/Qwen3-Coder-30B-A3B-GGUF](https://huggingface.co/unsloth/Qwen3-Coder-30B-A3B-GGUF) |
+| **RakutenAI 2.0 8x7B** | 47B MoE | ~26GB | ~40（推定） | 日本語特化。MoEアーキテクチャ | [mmnga/RakutenAI-2.0-8x7B-instruct-gguf](https://huggingface.co/mmnga/RakutenAI-2.0-8x7B-instruct-gguf) |
+| **RakutenAI 7B** | 7B | ~4GB | ~200（推定） | 日本語特化。非常に軽量 | [mmnga/RakutenAI-7B-instruct-gguf](https://huggingface.co/mmnga/RakutenAI-7B-instruct-gguf) |
+
+> 生成速度の出典: [RTX 5090 LLM Benchmarks (RunPod)](https://www.runpod.io/blog/rtx-5090-llm-benchmarks)、[hardware-corner.net](https://www.hardware-corner.net/rtx-5090-llm-benchmarks/)、[databasemart.com](https://www.databasemart.com/blog/ollama-gpu-benchmark-rtx5090)
+> 「推定」はベンチマーク未確認のため、同規模モデルからの推定値です。
+
+### 用途別おすすめ
+
+| 用途 | おすすめモデル |
+|---|---|
+| 日本語汎用 | Qwen3.5-27B / Gemma 3 27B |
+| 日本語特化 | RakutenAI 2.0 8x7B / RakutenAI 7B |
+| 高速レスポンス | Qwen3.5-9B / RakutenAI 7B |
+| コーディング | Qwen3-Coder-30B |
+| 推論・分析 | DeepSeek R1 32B |
+| 最高品質 | Qwen3-32B |
+
+---
+
 ## 量子化の選び方
 
 | 優先事項 | 推奨量子化 |
