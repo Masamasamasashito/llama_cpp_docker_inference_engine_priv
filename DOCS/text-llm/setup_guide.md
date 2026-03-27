@@ -83,7 +83,7 @@ python example/client_sample_qwen3.5-27b.py
 python example/client_sample_qwen3.5-9b.py
 
 # Gemma 3n E2B（既存）
-python example/client_sample.py
+python example/client_sample_gemma3n-e2b.py
 ```
 
 ---
