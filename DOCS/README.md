@@ -27,6 +27,16 @@ ComfyUI による動画生成AIの構築・運用ガイドです。
 - [セットアップ手順](openclaw-integration/setup_guide.md)
 - [ネットワーク設定](openclaw-integration/network_config.md)
 
+### [Ubuntu Ready（Ubuntu側完全手順）](ubuntu-ready/README.md)
+
+Ubuntu 24.04.4 LTS にOpenClawをインストールし、Windows LDIEへAPI連携するまでの完全手順です。
+
+- [1. 環境構築](ubuntu-ready/01_environment_setup.md) — Node.js・OpenClawインストール・固定IP
+- [2. ネットワーク確認](ubuntu-ready/02_network_verification.md) — LDIEサーバーへの疎通確認
+- [3. OpenClaw設定](ubuntu-ready/03_openclaw_config.md) — openclaw.json・モデル登録
+- [4. 動作確認・自走テスト](ubuntu-ready/04_run_and_test.md) — OpenClaw起動・自走確認
+- [5. セキュリティ対策](ubuntu-ready/05_security.md) — 専用ユーザー・権限制限・監視
+
 ---
 
 ## リファレンス
