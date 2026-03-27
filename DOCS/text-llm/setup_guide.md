@@ -69,7 +69,7 @@ curl http://localhost:8081/v1/models
 ```
 
 > ポートは `docker-compose.yml` によって異なります。
-> GPU版: `8081`、CPU版: `8080`（.envの`DOCKER_HOST_PORT_LLAMA`に依存）
+> GPU版: `8081`、CPU版: `8082`、High版: `8083`（.envの`DOCKER_HOST_PORT_LLAMA`に依存）
 
 ---
 
@@ -116,4 +116,4 @@ docker-compose up -d
 | OOM（メモリ不足） | 小さい量子化（Q3_K_M等）に変更、または `LLAMA_N_GPU_LAYERS` を減らす |
 | GPU効かない | `nvidia-smi` がDocker内で動くか確認。NVIDIA Container Toolkit要 |
 | 応答が遅い | CPU実行になっている可能性。`LLAMA_N_GPU_LAYERS=99` を確認 |
-| ポート接続できない | GPU版は `8081`、CPU版は `8080` がデフォルト。`docker ps` でポート確認 |
+| ポート接続できない | GPU版は `8081`、CPU版は `8082`、High版は `8083` がデフォルト。`docker ps` でポート確認 |

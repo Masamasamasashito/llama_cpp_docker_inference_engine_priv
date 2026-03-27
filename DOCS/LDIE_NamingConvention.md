@@ -38,7 +38,7 @@ COMMON_LDIE_DOCKER_LLAMA_GPU_IMAGE
 | 変数名 | スコープ | 説明 | デフォルト |
 |---|---|---|---|
 | `DOCKER_HOST_BIND_ADDR` | ホスト | バインドするIPアドレス | `127.0.0.1` |
-| `DOCKER_HOST_PORT_LLAMA` | ホスト | 外部公開ポート | `8081`（GPU）/ `8080`（CPU） |
+| `DOCKER_HOST_PORT_LLAMA` | ホスト | 外部公開ポート | `8081`（GPU）/ `8082`（CPU）/ `8083`（High） |
 | `LLAMA_CONTAINER_LISTEN_PORT` | コンテナ | コンテナ内部リッスンポート | `8080`（変更非推奨） |
 
 docker-compose.ymlでの使い方:
@@ -181,7 +181,7 @@ services:
 | 変数名 | 説明 | デフォルト |
 |---|---|---|
 | `DOCKER_HOST_BIND_ADDR` | ホスト側バインドアドレス | `127.0.0.1` |
-| `DOCKER_HOST_PORT_LLAMA` | ホスト側公開ポート | `8081`（GPU）/ `8080`（CPU） |
+| `DOCKER_HOST_PORT_LLAMA` | ホスト側公開ポート | `8081`（GPU）/ `8082`（CPU）/ `8083`（High） |
 | `LLAMA_CONTAINER_LISTEN_PORT` | コンテナ内リッスンポート | `8080`（変更非推奨） |
 
 ### Model

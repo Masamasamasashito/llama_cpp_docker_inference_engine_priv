@@ -20,7 +20,7 @@ services:
     container_name: llama-cpp-cpu-server
     logging: *default-logging
     ports:
-      - "${DOCKER_HOST_BIND_ADDR:-127.0.0.1}:${DOCKER_HOST_PORT_LLAMA:-8080}:${LLAMA_CONTAINER_LISTEN_PORT:-8080}"
+      - "${DOCKER_HOST_BIND_ADDR:-127.0.0.1}:${DOCKER_HOST_PORT_LLAMA:-8082}:${LLAMA_CONTAINER_LISTEN_PORT:-8080}"
     volumes:
       - ./models:/models:ro
       - ./logs:/logs

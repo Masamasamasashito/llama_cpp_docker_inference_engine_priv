@@ -284,8 +284,8 @@ docker-compose down
 | モード | docker-compose | デフォルトポート | 用途 |
 |---|---|---|---|
 | GPU | `docker-compose.yml` | `8081` | 標準GPU推論 |
-| CPU | `docker-compose.cpu.yml` | `8080` | GPU不要の検証用 |
-| High | `docker-compose.high.yml` | `8081` | RTX 5090最適化（VRAM 32GB） |
+| CPU | `docker-compose.cpu.yml` | `8082` | GPU不要の検証用 |
+| High | `docker-compose.high.yml` | `8083` | RTX 5090最適化（VRAM 32GB） |
 
 > ポートは `.env` の `DOCKER_HOST_PORT_LLAMA` で変更可能です。
 
@@ -312,7 +312,7 @@ docker-compose down
 | GPU効かない | NVIDIA Container Toolkit未導入 / CUDAバージョン不一致。`nvidia-smi` がDocker内で動くか確認 |
 | モデルロード失敗 | `.env` の `LLAMA_MODEL_FILE` と `models/` 内のファイル名が一致しているか確認 |
 | 応答が遅い | CPU実行になっている可能性。`LLAMA_N_GPU_LAYERS=99` を設定して全レイヤーGPUに |
-| ポートに接続できない | GPU版は `8081`、CPU版は `8080` がデフォルト。`docker ps` でポート確認 |
+| ポートに接続できない | GPU版は `8081`、CPU版は `8082`、High版は `8083` がデフォルト。`docker ps` でポート確認 |
 | 401 Unauthorized | API Key不一致。`.env` の `LLAMA_API_KEY` とリクエストの `Authorization` ヘッダーを確認 |
 | LAN内の他PCから接続不可 | `DOCKER_HOST_BIND_ADDR` がプライベートIPになっているか、ファイアウォールが開いているか確認 |
 
