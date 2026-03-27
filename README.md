@@ -126,32 +126,28 @@ RTX 5090（VRAM 32GB）をローカルLLM推論に使う際、既存ツールに
 
 ```
 LDIE/
-├── models/                            # モデル(GGUF)ファイル配置用
-├── logs/                              # サーバーログ保存用
-├── example/                           # テストリクエストスクリプト
-│   ├── test_request_gemma3-27b.py     # Gemma 3 27B
-│   ├── test_request_gemma3n-e2b.py    # Gemma 3n E2B
-│   ├── test_request_qwen3.5-27b.py    # Qwen3.5-27B
-│   ├── test_request_qwen3.5-9b.py     # Qwen3.5-9B
-│   ├── test_request_qwen3-32b.py      # Qwen3-32B
-│   ├── test_request_qwen3-coder-30b.py # Qwen3-Coder-30B
-│   ├── test_request_deepseek-r1-32b.py # DeepSeek R1 32B
-│   ├── test_request_ltx-video.py      # LTX-Video (ComfyUI)
-│   ├── test_request_wan-video-14b.py  # Wan 2.2 14B (ComfyUI)
-│   ├── test_request_wan-video-1.3b.py # Wan 2.1 1.3B (ComfyUI)
-│   ├── test_request_hunyuanvideo-1.5.py # HunyuanVideo 1.5 (ComfyUI)
-│   └── test_request_logprobs.py       # logprobs比較テスト
+├── LDIE_Infra_Docker/                   # Docker関連をここに集約
+│   ├── docker-compose.yml               # GPU版（デフォルト）
+│   ├── docker-compose.cpu.yml           # CPU版
+│   ├── docker-compose.high.yml          # RTX 5090向け高性能版
+│   ├── .env.example.*                   # モデル別環境変数テンプレート（11種）
+│   ├── models/                          # モデル(GGUF)ファイル配置用
+│   └── logs/                            # サーバーログ保存用
+├── example/                             # テストリクエストスクリプト
+│   ├── test_request_gemma3-27b.py
+│   ├── test_request_qwen3.5-27b.py
+│   ├── test_request_deepseek-r1-32b.py
+│   ├── test_request_ltx-video.py
+│   └── ...（全12ファイル）
 ├── DOCS/
-│   ├── README.md                      # ドキュメントハブ
-│   ├── LDIE_NamingConvention.md       # 命名規則リファレンス
-│   ├── LDIE_ModelSecurityAssessment.md # モデルセキュリティ評価
-│   ├── text-llm/                      # テキスト生成LLMドキュメント
-│   ├── video-generation/              # 動画生成ドキュメント
-│   └── openclaw-integration/          # OpenClaw連携ガイド
-├── .env.example.*                     # モデル別環境変数テンプレート（11種）
-├── docker-compose.yml                 # GPU版（デフォルト）
-├── docker-compose.cpu.yml             # CPU版
-├── docker-compose.high.yml            # RTX 5090向け高性能版
+│   ├── README.md                        # ドキュメントハブ
+│   ├── LDIE_Architecture.md             # アーキテクチャ（2パターン）
+│   ├── LDIE_NamingConvention.md         # 命名規則リファレンス
+│   ├── LDIE_ModelSecurityAssessment.md  # モデルセキュリティ評価
+│   ├── text-llm/                        # テキスト生成LLMドキュメント
+│   ├── video-generation/                # 動画生成ドキュメント
+│   ├── openclaw-integration/            # OpenClaw連携ガイド
+│   └── ubuntu-ready/                    # Ubuntu側完全手順
 └── README.md
 ```
 
@@ -166,7 +162,15 @@ git clone https://github.com/Masamasamasashito/llama_cpp_docker_inference_engine
 cd llama_cpp_docker_inference_engine_priv
 ```
 
-### 2. モデルのダウンロード
+### 2. Docker作業ディレクトリに移動
+
+```bash
+cd LDIE_Infra_Docker
+```
+
+> 以降のdocker-compose・.env・modelsの操作はすべて `LDIE_Infra_Docker/` 内で行います。
+
+### 3. モデルのダウンロード
 
 `models/` ディレクトリにGGUFファイルを配置します。
 
@@ -186,7 +190,7 @@ curl -L -o models/Qwen3.5-9B-Q4_K_M.gguf \
 
 > 全モデルのダウンロードURLは各 `.env.example.*` ファイルの冒頭に記載されています。
 
-### 3. 環境変数の設定
+### 4. 環境変数の設定
 
 使いたいモデルの `.env.example.*` をコピーして `.env` を作成します。
 
@@ -201,7 +205,7 @@ cp .env.example.qwen3.5-27b .env
 > `.env.example.*` はセクション構造化されています。
 > 詳細は [LDIE 命名規則](DOCS/LDIE_NamingConvention.md) を参照してください。
 
-### 4. （オプション）API Key の生成
+### 5. （オプション）API Key の生成
 
 OpenClaw連携やLAN公開する場合は、API Key認証を有効化してください。
 
@@ -215,7 +219,7 @@ echo "LLAMA_API_KEY=sk-local-$(openssl rand -hex 32)" >> .env
 $bytes = New-Object byte[] 32; (New-Object System.Security.Cryptography.RNGCryptoServiceProvider).GetBytes($bytes); $hex = -join ($bytes | ForEach-Object { $_.ToString("x2") }); "LLAMA_API_KEY=sk-local-$hex" | Add-Content .env
 ```
 
-### 5. 起動
+### 6. 起動
 
 ```bash
 # GPU版（デフォルト）
@@ -228,7 +232,7 @@ docker-compose -f docker-compose.cpu.yml up -d
 docker-compose -f docker-compose.high.yml up -d
 ```
 
-### 6. 動作確認
+### 7. 動作確認
 
 ```bash
 # ヘルスチェック（GPU版のデフォルトポートは 8081）
@@ -239,7 +243,7 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \
   http://localhost:8081/v1/models
 ```
 
-### 7. 使い方
+### 8. 使い方
 
 #### WebUI（ブラウザ）
 
@@ -273,7 +277,7 @@ curl -X POST http://localhost:8081/v1/chat/completions \
 python example/test_request_gemma3-27b.py
 ```
 
-### 8. 停止
+### 9. 停止
 
 ```bash
 docker-compose down

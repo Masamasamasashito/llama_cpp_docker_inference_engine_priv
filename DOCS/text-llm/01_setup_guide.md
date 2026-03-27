@@ -4,6 +4,14 @@
 
 ---
 
+## 0. Docker作業ディレクトリに移動
+
+```bash
+cd LDIE_Infra_Docker
+```
+
+> 以降のコマンドはすべて `LDIE_Infra_Docker/` 内で実行します。
+
 ## 1. モデルのダウンロード
 
 `models/` ディレクトリにGGUFファイルをダウンロードします。

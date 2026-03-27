@@ -208,8 +208,11 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-# Llama.cpp Docker Setup用
+# LDIE Infra Docker
 models/
-logs/
+LDIE_Infra_Docker/models/
+!LDIE_Infra_Docker/models/.gitkeep
+LDIE_Infra_Docker/logs/
+!LDIE_Infra_Docker/logs/.gitkeep
+LDIE_Infra_Docker/.env
 webui-data/
-.env

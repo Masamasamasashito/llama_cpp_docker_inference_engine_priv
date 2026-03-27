@@ -23,6 +23,9 @@ LLMサーバーPCでllama.cppを起動し、他PCのOpenClawからローカルLL
 モデルをダウンロードしてdocker-composeで起動します。
 
 ```bash
+# Docker作業ディレクトリに移動
+cd LDIE_Infra_Docker
+
 # .envを設定（例: Qwen3.5-27B）
 cp .env.example.qwen3.5-27b .env
 
