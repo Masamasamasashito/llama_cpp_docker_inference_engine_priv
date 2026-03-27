@@ -27,10 +27,11 @@
 
 | 項目 | LLMサーバーPC | クライアントPC |
 |---|---|---|
-| OS | Windows / Linux | Windows / macOS / Linux |
+| OS | Windows 11 Pro | Ubuntu 24.04.4 LTS |
 | GPU | RTX 5090推奨 | 不要 |
-| ソフトウェア | Docker, NVIDIA Container Toolkit | Node.js 22以上, OpenClaw |
-| ネットワーク | 同一LAN内、固定IPまたはmDNS | 同一LAN内 |
+| ソフトウェア | Docker Desktop, NVIDIA Container Toolkit | Node.js 22以上, OpenClaw |
+| ネットワーク | 同一LAN内、固定IP推奨 | 同一LAN内、固定IP推奨 |
+| ファイアウォール | Ubuntu PCのIPのみ8081を許可 | 特になし |
 
 ---
 

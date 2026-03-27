@@ -42,35 +42,52 @@ docker-compose -f docker-compose.high.yml up -d
 docker-compose.ymlではコンテナの8080ポートをホストの8081にマッピングしています。
 Dockerの `0.0.0.0` バインドにより、デフォルトでLAN内の他PCからアクセス可能です。
 
-```bash
-# サーバーPC自身で確認
+```powershell
+# サーバーPC（Windows 11 Pro）自身で確認
 curl http://localhost:8081/health
 curl http://localhost:8081/v1/models
 
 # サーバーPCのLAN IPを確認
-# Windows
 ipconfig
-# Linux
-ip addr show
+# 「IPv4 アドレス」の値を控える（例: 192.168.1.100）
 ```
 
-サーバーPCのIPアドレスを控えてください（例: `192.168.1.100`）。
-
-### 1-3. ファイアウォール設定
-
+サーバーPCとUbuntu PCの両方を固定IPにすることを推奨します。
 詳細は [ネットワーク設定](network_config.md) を参照してください。
 
-**Windows（PowerShell を管理者で実行）:**
+### 1-3. ファイアウォール設定（Windows 11 Pro）
+
+Ubuntu PCのIPのみを許可する厳格なルールを設定します。
+PowerShellを**管理者権限**で実行してください。
 
 ```powershell
-New-NetFirewallRule -DisplayName "llama.cpp API" -Direction Inbound -Port 8081 -Protocol TCP -Action Allow
+# UbuntuクライアントPCのIPアドレス（環境に合わせて変更）
+$UbuntuIP = "192.168.1.200"
+
+# 指定IPからの8081のみ許可（プライベートネットワーク限定）
+New-NetFirewallRule `
+  -DisplayName "llama.cpp API - OpenClaw Only" `
+  -Description "Ubuntu OpenClaw PC ($UbuntuIP) からのllama.cpp API接続のみ許可" `
+  -Direction Inbound `
+  -Action Allow `
+  -Protocol TCP `
+  -LocalPort 8081 `
+  -RemoteAddress $UbuntuIP `
+  -Profile Private `
+  -Enabled True
+
+# 他のすべてのIPからの8081を明示的にブロック
+New-NetFirewallRule `
+  -DisplayName "llama.cpp API - Block Others" `
+  -Direction Inbound `
+  -Action Block `
+  -Protocol TCP `
+  -LocalPort 8081 `
+  -Profile Any `
+  -Enabled True
 ```
 
-**Linux（ufw）:**
-
-```bash
-sudo ufw allow 8081/tcp
-```
+> 詳細なセキュリティ設定・ログ監視・管理方法は [ネットワーク設定](network_config.md) を参照してください。
 
 ### 1-4. 他PCからの疎通確認
 
