@@ -208,6 +208,9 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
+# Claude Code local settings (contains user-specific paths)
+.claude/settings.local.json
+
 # LDIE Infra Docker
 models/
 LDIE_Infra_Docker/models/
