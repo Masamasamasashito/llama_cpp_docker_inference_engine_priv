@@ -22,7 +22,7 @@ curl -L -o models/Qwen3.5-9B-Q4_K_M.gguf \
   https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/Qwen3.5-9B-Q4_K_M.gguf
 ```
 
-> 別の量子化を使いたい場合は [利用可能モデル一覧](available_models.md) を参照してください。
+> 別の量子化を使いたい場合は [利用可能モデル一覧](02_available_models.md) を参照してください。
 
 ---
 

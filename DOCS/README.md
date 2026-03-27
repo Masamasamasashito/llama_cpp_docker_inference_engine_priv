@@ -10,22 +10,22 @@
 
 llama.cpp + Docker によるテキスト生成AIの構築・運用ガイドです。
 
-- [セットアップ手順](text-llm/setup_guide.md)
-- [利用可能モデル一覧](text-llm/available_models.md)
+- [セットアップ手順](text-llm/01_setup_guide.md)
+- [利用可能モデル一覧](text-llm/02_available_models.md)
 
 ### [動画生成（ComfyUI）](video-generation/README.md)
 
 ComfyUI による動画生成AIの構築・運用ガイドです。
 
-- [セットアップ手順](video-generation/setup_guide.md)
-- [利用可能モデル一覧](video-generation/available_models.md)
+- [セットアップ手順](video-generation/01_setup_guide.md)
+- [利用可能モデル一覧](video-generation/02_available_models.md)
 
 ### [OpenClaw連携](openclaw-integration/README.md)
 
 ホームLAN内の他PC（Ubuntu 24.04）のOpenClawにローカルLLMをAPI提供し、AIエージェントを自走させるガイドです。
 
-- [セットアップ手順](openclaw-integration/setup_guide.md)
-- [ネットワーク設定](openclaw-integration/network_config.md)
+- [セットアップ手順](openclaw-integration/01_setup_guide.md)
+- [ネットワーク設定](openclaw-integration/02_network_config.md)
 
 ### [Ubuntu Ready（Ubuntu側完全手順）](ubuntu-ready/README.md)
 

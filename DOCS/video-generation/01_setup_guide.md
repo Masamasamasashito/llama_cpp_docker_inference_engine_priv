@@ -3,7 +3,7 @@
 ComfyUI を使った動画生成環境の構築手順です。
 RTX 5090（VRAM 32GB）を前提としています。
 
-> テキスト生成LLM（llama.cpp）のセットアップは [こちら](../text-llm/setup_guide.md) を参照してください。
+> テキスト生成LLM（llama.cpp）のセットアップは [こちら](../text-llm/01_setup_guide.md) を参照してください。
 
 ---
 
@@ -100,4 +100,4 @@ RTX 5090のNVFP4/NVFP8対応により、さらにVRAM使用量を削減可能で
 
 ---
 
-[利用可能モデル一覧](available_models.md) | [動画生成トップ](README.md) | [ドキュメント一覧](../README.md)
+[利用可能モデル一覧](02_available_models.md) | [動画生成トップ](README.md) | [ドキュメント一覧](../README.md)

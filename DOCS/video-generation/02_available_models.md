@@ -65,4 +65,4 @@ ComfyUIのカスタムノードで利用可能。
 
 ---
 
-[テキスト生成LLMモデル一覧](../text-llm/available_models.md) | [動画生成トップ](README.md) | [ドキュメント一覧](../README.md)
+[テキスト生成LLMモデル一覧](../text-llm/02_available_models.md) | [動画生成トップ](README.md) | [ドキュメント一覧](../README.md)

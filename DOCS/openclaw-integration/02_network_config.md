@@ -478,4 +478,4 @@ Remove-NetFirewallRule -DisplayName "llama.cpp API - Block Others"
 
 ---
 
-[セットアップ手順](setup_guide.md) | [OpenClaw連携トップ](README.md) | [ドキュメント一覧](../README.md)
+[セットアップ手順](01_setup_guide.md) | [OpenClaw連携トップ](README.md) | [ドキュメント一覧](../README.md)

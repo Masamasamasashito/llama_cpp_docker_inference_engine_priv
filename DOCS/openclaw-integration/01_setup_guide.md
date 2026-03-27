@@ -19,7 +19,7 @@ LLMサーバーPCでllama.cppを起動し、他PCのOpenClawからローカルLL
 
 ### 1-1. モデルのダウンロードと起動
 
-テキスト生成LLMの [セットアップ手順](../text-llm/setup_guide.md) に従い、
+テキスト生成LLMの [セットアップ手順](../text-llm/01_setup_guide.md) に従い、
 モデルをダウンロードしてdocker-composeで起動します。
 
 ```bash
@@ -71,7 +71,7 @@ curl http://192.168.1.100:8081/v1/models
 ```
 
 サーバーPCとUbuntu PCの両方を固定プライベートIPにすることを推奨します。
-詳細は [ネットワーク設定](network_config.md) を参照してください。
+詳細は [ネットワーク設定](02_network_config.md) を参照してください。
 
 ### 1-3. ファイアウォール設定（Windows 11 Pro）
 
@@ -105,12 +105,12 @@ New-NetFirewallRule `
   -Enabled True
 ```
 
-> 詳細なセキュリティ設定・ログ監視・管理方法は [ネットワーク設定](network_config.md) を参照してください。
+> 詳細なセキュリティ設定・ログ監視・管理方法は [ネットワーク設定](02_network_config.md) を参照してください。
 
 ### 1-4. API Key認証の有効化
 
 llama.cppの `--api-key` オプションでBearer Token認証を有効化します。
-詳細は [ネットワーク設定 - Step 2](network_config.md) を参照してください。
+詳細は [ネットワーク設定 - Step 2](02_network_config.md) を参照してください。
 
 ```bash
 # .env に追加
@@ -304,7 +304,7 @@ OpenClawがローカルLLMの応答に基づいて自律的にコマンド実行
 
 | 問題 | 原因・対策 |
 |---|---|
-| `Connection refused` | サーバーPCのファイアウォール確認。[ネットワーク設定](network_config.md) 参照 |
+| `Connection refused` | サーバーPCのファイアウォール確認。[ネットワーク設定](02_network_config.md) 参照 |
 | `401 Unauthorized` | API Keyが一致していない。サーバーの `.env` の `LLAMA_API_KEY` と openclaw.json の `apiKey` を確認 |
 | `Model not found` | `curl -H "Authorization: Bearer ..." http://サーバーIP:8081/v1/models` でモデルIDを確認し、openclaw.jsonの `id` と一致させる |
 | OpenClawが応答しない | `contextWindow` が大きすぎると遅くなる。.envの `LLAMA_CTX_SIZE` と合わせる |
@@ -313,4 +313,4 @@ OpenClawがローカルLLMの応答に基づいて自律的にコマンド実行
 
 ---
 
-[ネットワーク設定](network_config.md) | [OpenClaw連携トップ](README.md) | [ドキュメント一覧](../README.md)
+[ネットワーク設定](02_network_config.md) | [OpenClaw連携トップ](README.md) | [ドキュメント一覧](../README.md)

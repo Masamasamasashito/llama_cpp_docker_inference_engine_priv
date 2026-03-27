@@ -9,8 +9,8 @@ Diffusionベースのモデルを ComfyUI 経由で実行します。
 
 ## ドキュメント
 
-- [セットアップ手順](setup_guide.md) - ComfyUIの導入から動画生成まで
-- [利用可能モデル一覧](available_models.md) - 動画生成モデルの比較・VRAM要件
+- [セットアップ手順](01_setup_guide.md) - ComfyUIの導入から動画生成まで
+- [利用可能モデル一覧](02_available_models.md) - 動画生成モデルの比較・VRAM要件
 
 ## 対応モデル
 

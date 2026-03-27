@@ -15,7 +15,7 @@ API連携してAIエージェントを自走させるまでの完全手順です
 | ネットワーク | Windows LDIEサーバーと同一LAN |
 | Windows側 | LDIE起動済み、ファイアウォール設定済み、API Key発行済み |
 
-> Windows側の準備がまだの場合は [OpenClaw連携 セットアップ手順](../openclaw-integration/setup_guide.md) のStep 1を先に完了してください。
+> Windows側の準備がまだの場合は [OpenClaw連携 セットアップ手順](../openclaw-integration/01_setup_guide.md) のStep 1を先に完了してください。
 
 ## 2つの運用パターン
 
