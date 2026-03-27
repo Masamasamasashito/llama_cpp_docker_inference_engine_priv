@@ -17,13 +17,21 @@ RTX 5090（VRAM 32GB）を前提としています。
 
 ## 1. ComfyUI のインストール
 
-### Docker を使う場合
+### LDIE docker-compose を使う場合（推奨）
 
 ```bash
-docker run -it --gpus all -p 8188:8188 \
-  -v $(pwd)/comfyui-models:/root/ComfyUI/models \
-  ghcr.io/ai-dock/comfyui:latest
+cd LDIE_Infra_Docker
+
+# 動画モデルの.envをコピー（例: LTX-Video）
+cp .env.example.ltx-video .env
+
+# ComfyUI起動
+docker-compose -f docker-compose.comfyui.yml up -d
 ```
+
+ブラウザで `http://localhost:8188` にアクセスして起動を確認します。
+
+> ポートは `.env` の `DOCKER_HOST_PORT_COMFYUI` で変更可能です（デフォルト: 8188）。
 
 ### 手動インストールの場合
 
@@ -33,8 +41,6 @@ cd ComfyUI
 pip install -r requirements.txt
 python main.py --listen 0.0.0.0
 ```
-
-ブラウザで `http://localhost:8188` にアクセスして起動を確認します。
 
 ---
 

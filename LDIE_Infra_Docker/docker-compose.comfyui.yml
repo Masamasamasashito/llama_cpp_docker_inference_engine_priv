@@ -1,0 +1,51 @@
+#---------------------------------------------------------------------------
+# Global Logging Configuration (Log Rotation)
+#---------------------------------------------------------------------------
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+#---------------------------------------------------------------------------
+# services
+#---------------------------------------------------------------------------
+services:
+
+  #---------------------------------------------------------------------------
+  # ComfyUI service (Video Generation)
+  #---------------------------------------------------------------------------
+  comfyui:
+    image: ${COMMON_LDIE_DOCKER_COMFYUI_IMAGE:-ghcr.io/ai-dock/comfyui}:${COMMON_LDIE_DOCKER_COMFYUI_IMAGE_TAG:-latest}
+    logging: *default-logging
+    ports:
+      - "${DOCKER_HOST_BIND_ADDR:-127.0.0.1}:${DOCKER_HOST_PORT_COMFYUI:-8188}:${COMFYUI_CONTAINER_LISTEN_PORT:-8188}"
+    volumes:
+      - comfyui_models:/root/ComfyUI/models
+      - comfyui_output:/root/ComfyUI/output
+      - comfyui_custom_nodes:/root/ComfyUI/custom_nodes
+    environment:
+      - TZ=${COMMON_TIMEZONE:-Asia/Tokyo}
+      - CLI_ARGS=--listen 0.0.0.0 --port ${COMFYUI_CONTAINER_LISTEN_PORT:-8188}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:${COMFYUI_CONTAINER_LISTEN_PORT:-8188}/system_stats"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 180s
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+#---------------------------------------------------------------------------
+# volumes
+#---------------------------------------------------------------------------
+volumes:
+  comfyui_models:
+  comfyui_output:
+  comfyui_custom_nodes:

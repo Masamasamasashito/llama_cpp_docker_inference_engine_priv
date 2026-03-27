@@ -130,6 +130,7 @@ LDIE/
 │   ├── docker-compose.yml               # GPU版（デフォルト）
 │   ├── docker-compose.cpu.yml           # CPU版
 │   ├── docker-compose.high.yml          # RTX 5090向け高性能版
+│   ├── docker-compose.comfyui.yml       # 動画生成（ComfyUI）
 │   ├── .env.example.*                   # モデル別環境変数テンプレート（11種）
 │   ├── models/                          # モデル(GGUF)ファイル配置用
 │   └── logs/                            # サーバーログ保存用
@@ -292,8 +293,9 @@ docker-compose down
 | GPU | `docker-compose.yml` | `8081` | 標準GPU推論 |
 | CPU | `docker-compose.cpu.yml` | `8082` | GPU不要の検証用 |
 | High | `docker-compose.high.yml` | `8083` | RTX 5090最適化（VRAM 32GB） |
+| ComfyUI | `docker-compose.comfyui.yml` | `8188` | 動画生成（ComfyUI WebUI） |
 
-> ポートは `.env` の `DOCKER_HOST_PORT_LLAMA` で変更可能です。
+> テキストLLMのポートは `.env` の `DOCKER_HOST_PORT_LLAMA`、ComfyUIは `DOCKER_HOST_PORT_COMFYUI` で変更可能です。
 
 ---
 
