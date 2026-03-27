@@ -16,7 +16,7 @@ services:
   # llama.cpp CPU service
   #---------------------------------------------------------------------------
   llama-cpp-cpu:
-    image: ${COMMON_EO_DOCKER_LLAMA_CPU_IMAGE:-ghcr.io/ggerganov/llama.cpp}:${COMMON_EO_DOCKER_LLAMA_CPU_IMAGE_TAG:-latest}
+    image: ${COMMON_LDIE_DOCKER_LLAMA_CPU_IMAGE:-ghcr.io/ggerganov/llama.cpp}:${COMMON_LDIE_DOCKER_LLAMA_CPU_IMAGE_TAG:-latest}
     container_name: llama-cpp-cpu-server
     logging: *default-logging
     ports:

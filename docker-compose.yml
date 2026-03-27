@@ -16,7 +16,7 @@ services:
   # llama.cpp GPU service (CUDA)
   #---------------------------------------------------------------------------
   llama-cpp-gpu:
-    image: ${COMMON_EO_DOCKER_LLAMA_GPU_IMAGE:-ghcr.io/ggml-org/llama.cpp}:${COMMON_EO_DOCKER_LLAMA_GPU_IMAGE_TAG:-server-cuda}
+    image: ${COMMON_LDIE_DOCKER_LLAMA_GPU_IMAGE:-ghcr.io/ggml-org/llama.cpp}:${COMMON_LDIE_DOCKER_LLAMA_GPU_IMAGE_TAG:-server-cuda}
     logging: *default-logging
     ports:
       - "${DOCKER_HOST_BIND_ADDR:-127.0.0.1}:${DOCKER_HOST_PORT_LLAMA:-8081}:${LLAMA_CONTAINER_LISTEN_PORT:-8080}"

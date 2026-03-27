@@ -28,3 +28,10 @@ ComfyUI による動画生成AIの構築・運用ガイドです。
 
 - [セットアップ手順](openclaw-integration/setup_guide.md)
 - [ネットワーク設定](openclaw-integration/network_config.md)
+
+---
+
+## [LDIE 命名規則](LDIE_NamingConvention.md)
+
+環境変数・ファイル・ボリューム等の命名規則リファレンスです。
+LDIE = **L**lama.cpp **D**ocker **I**nference **E**ngine
