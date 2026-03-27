@@ -23,7 +23,7 @@ curl -L -o models/Qwen3.5-9B-Q4_K_M.gguf \
 docker-compose up -d
 
 # 4. テスト
-python example/client_sample_qwen3.5-9b.py
+python example/test_request_qwen3.5-9b.py
 ```
 
 ## 関連ファイル

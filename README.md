@@ -59,9 +59,9 @@ LDIE/
 ├── models/                        # モデル(GGUF)ファイル配置用
 ├── logs/                          # サーバーログ保存用
 ├── example/                       # クライアントサンプルコード
-│   ├── client_sample_gemma3n-e2b.py
-│   ├── client_sample_qwen3.5-27b.py
-│   ├── client_sample_qwen3.5-9b.py
+│   ├── test_request_gemma3n-e2b.py
+│   ├── test_request_qwen3.5-27b.py
+│   ├── test_request_qwen3.5-9b.py
 │   └── simple_logprobs_test.py
 ├── DOCS/
 │   ├── README.md                  # ドキュメントハブ
@@ -194,7 +194,7 @@ curl -X POST http://localhost:8081/v1/chat/completions \
 
 ```bash
 # Pythonサンプル
-python example/client_sample_qwen3.5-27b.py
+python example/test_request_qwen3.5-27b.py
 ```
 
 ### 8. 停止

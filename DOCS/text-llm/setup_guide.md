@@ -77,13 +77,13 @@ curl http://localhost:8081/v1/models
 
 ```bash
 # Qwen3.5-27B
-python example/client_sample_qwen3.5-27b.py
+python example/test_request_qwen3.5-27b.py
 
 # Qwen3.5-9B
-python example/client_sample_qwen3.5-9b.py
+python example/test_request_qwen3.5-9b.py
 
 # Gemma 3n E2B（既存）
-python example/client_sample_gemma3n-e2b.py
+python example/test_request_gemma3n-e2b.py
 ```
 
 ---

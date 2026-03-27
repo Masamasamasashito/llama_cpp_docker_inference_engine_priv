@@ -153,7 +153,7 @@ services:
 | パターン | 例 | 説明 |
 |---|---|---|
 | `.env.example.<モデル名>` | `.env.example.qwen3.5-27b` | モデル別環境変数テンプレート |
-| `client_sample_<モデル名>.py` | `client_sample_qwen3.5-27b.py` | モデル別クライアントサンプル |
+| `test_request_<モデル名>.py` | `test_request_qwen3.5-27b.py` | モデル別テストリクエスト |
 | `docker-compose.<バリアント>.yml` | `docker-compose.high.yml` | 構成別Docker Compose |
 | `DOCS/<カテゴリ>/` | `DOCS/text-llm/` | カテゴリ別ドキュメント |
 
