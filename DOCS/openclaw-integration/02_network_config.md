@@ -203,22 +203,8 @@ curl -H "Authorization: Bearer sk-local-your-secret-key-here" \
 
 ### 2-4. OpenClaw側のapiKeyを更新
 
-`~/.openclaw/openclaw.json` の `apiKey` をダミー値から実際のキーに変更:
-
-```jsonc
-{
-  "models": {
-    "providers": {
-      "local-llm": {
-        "baseUrl": "http://192.168.1.100:8081/v1",
-        "apiKey": "sk-local-your-secret-key-here",  // ← 実際のAPI Keyに変更
-        "api": "openai-completions",
-        ...
-      }
-    }
-  }
-}
-```
+Ubuntu側の `~/.openclaw/openclaw.json` にこのAPI Keyを設定します。
+詳細は [Ubuntu Ready - OpenClaw設定](../ubuntu-ready/03_openclaw_config.md) を参照してください。
 
 ---
 
