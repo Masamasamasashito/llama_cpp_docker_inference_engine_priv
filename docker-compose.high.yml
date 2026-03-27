@@ -7,14 +7,14 @@ services:
       - ./models:/models:ro
     environment:
       - CUDA_VISIBLE_DEVICES=0
-      # RTX4090最適化環境変数
+      # RTX5090最適化環境変数（VRAM 32GB）
       - LLAMA_MODEL_FILE=${LLAMA_MODEL_FILE}
       - LLAMA_N_GPU_LAYERS=${LLAMA_N_GPU_LAYERS:--1}
-      - LLAMA_CTX_SIZE=${LLAMA_CTX_SIZE:-32768}
-      - LLAMA_BATCH_SIZE=${LLAMA_BATCH_SIZE:-2048}
-      - LLAMA_UBATCH_SIZE=${LLAMA_UBATCH_SIZE:-1024}
-      - LLAMA_THREADS=${LLAMA_THREADS:-16}
-      - LLAMA_N_PARALLEL=${LLAMA_N_PARALLEL:-8}
+      - LLAMA_CTX_SIZE=${LLAMA_CTX_SIZE:-65536}
+      - LLAMA_BATCH_SIZE=${LLAMA_BATCH_SIZE:-4096}
+      - LLAMA_UBATCH_SIZE=${LLAMA_UBATCH_SIZE:-2048}
+      - LLAMA_THREADS=${LLAMA_THREADS:-24}
+      - LLAMA_N_PARALLEL=${LLAMA_N_PARALLEL:-16}
       - LLAMA_TEMP=${LLAMA_TEMP:-0.8}
       - LLAMA_TOP_K=${LLAMA_TOP_K:-40}
       - LLAMA_TOP_P=${LLAMA_TOP_P:-0.95}
@@ -25,12 +25,12 @@ services:
       --host 0.0.0.0
       --port 8080
       --n-gpu-layers 99
-      --ctx-size ${LLAMA_CTX_SIZE:-32768}
-      --batch-size ${LLAMA_BATCH_SIZE:-1024}
-      --ubatch-size ${LLAMA_UBATCH_SIZE:-512}
-      --threads ${LLAMA_THREADS:-16}
-      --threads-batch ${LLAMA_THREADS:-16}
-      --parallel ${LLAMA_N_PARALLEL:-8}
+      --ctx-size ${LLAMA_CTX_SIZE:-65536}
+      --batch-size ${LLAMA_BATCH_SIZE:-4096}
+      --ubatch-size ${LLAMA_UBATCH_SIZE:-2048}
+      --threads ${LLAMA_THREADS:-24}
+      --threads-batch ${LLAMA_THREADS:-24}
+      --parallel ${LLAMA_N_PARALLEL:-16}
       --temp ${LLAMA_TEMP:-0.8}
       --top-k ${LLAMA_TOP_K:-40}
       --top-p ${LLAMA_TOP_P:-0.95}
