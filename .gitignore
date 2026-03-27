@@ -218,4 +218,6 @@ LDIE_Infra_Docker/models/
 LDIE_Infra_Docker/logs/
 !LDIE_Infra_Docker/logs/.gitkeep
 LDIE_Infra_Docker/.env
+LDIE_Infra_Docker/.env-*-bk
+LDIE_Infra_Docker/.env-bk
 webui-data/
