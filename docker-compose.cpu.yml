@@ -5,7 +5,7 @@ services:
     image: ghcr.io/ggerganov/llama.cpp:latest
     container_name: llama-cpp-cpu-server
     ports:
-      - "${LLAMA_PORT:-8080}:8080"
+      - "${LLAMA_BIND_ADDRESS:-127.0.0.1}:${LLAMA_PORT:-8080}:8080"
     volumes:
       - ./models:/models:ro
       - ./logs:/logs

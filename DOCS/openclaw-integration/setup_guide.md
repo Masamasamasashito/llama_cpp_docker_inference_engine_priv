@@ -37,42 +37,60 @@ docker-compose up -d
 docker-compose -f docker-compose.high.yml up -d
 ```
 
-### 1-2. LAN公開の確認
+### 1-2. バインドアドレスをプライベートIPに制限
 
-docker-compose.ymlではコンテナの8080ポートをホストの8081にマッピングしています。
-Dockerの `0.0.0.0` バインドにより、デフォルトでLAN内の他PCからアクセス可能です。
+**重要:** デフォルトではdocker-composeは `127.0.0.1`（ローカルのみ）にバインドします。
+LAN内の他PCからアクセスするには、`.env` で `LLAMA_BIND_ADDRESS` をサーバーPCの
+プライベートIPに設定する必要があります。
 
 ```powershell
-# サーバーPC（Windows 11 Pro）自身で確認
-curl http://localhost:8081/health
-curl http://localhost:8081/v1/models
-
-# サーバーPCのLAN IPを確認
+# まずサーバーPCのプライベートIPを確認
 ipconfig
 # 「IPv4 アドレス」の値を控える（例: 192.168.1.100）
 ```
 
-サーバーPCとUbuntu PCの両方を固定IPにすることを推奨します。
+```bash
+# .env に追加（プライベートIPを指定）
+LLAMA_BIND_ADDRESS=192.168.1.100
+```
+
+これにより、docker-composeは `192.168.1.100:8081` にのみバインドし、
+`0.0.0.0`（全インターフェース）には公開されません。
+
+> `LLAMA_BIND_ADDRESS` を設定しない場合、`127.0.0.1` にバインドされ
+> サーバーPC自身からのみアクセス可能です（LAN内の他PCからはアクセス不可）。
+
+```powershell
+# docker-composeを再起動
+docker-compose down
+docker-compose up -d
+
+# サーバーPC自身で確認
+curl http://192.168.1.100:8081/health
+curl http://192.168.1.100:8081/v1/models
+```
+
+サーバーPCとUbuntu PCの両方を固定プライベートIPにすることを推奨します。
 詳細は [ネットワーク設定](network_config.md) を参照してください。
 
 ### 1-3. ファイアウォール設定（Windows 11 Pro）
 
-Ubuntu PCのIPのみを許可する厳格なルールを設定します。
+Ubuntu PCのプライベートIPアドレスのみを許可する厳格なルールを設定します。
 PowerShellを**管理者権限**で実行してください。
 
 ```powershell
-# UbuntuクライアントPCのIPアドレス（環境に合わせて変更）
-$UbuntuIP = "192.168.1.200"
+# UbuntuクライアントPCのプライベートIPアドレス（環境に合わせて変更）
+$UbuntuPrivateIP = "192.168.1.200"
 
 # 指定IPからの8081のみ許可（プライベートネットワーク限定）
 New-NetFirewallRule `
   -DisplayName "llama.cpp API - OpenClaw Only" `
-  -Description "Ubuntu OpenClaw PC ($UbuntuIP) からのllama.cpp API接続のみ許可" `
+  -Description "Ubuntu OpenClaw PC ($UbuntuPrivateIP) からのllama.cpp API接続のみ許可" `
   -Direction Inbound `
   -Action Allow `
   -Protocol TCP `
   -LocalPort 8081 `
-  -RemoteAddress $UbuntuIP `
+  -RemoteAddress $UbuntuPrivateIP `
   -Profile Private `
   -Enabled True
 
