@@ -31,7 +31,7 @@
 | GPU | RTX 5090推奨 | 不要 |
 | ソフトウェア | Docker Desktop, NVIDIA Container Toolkit | Node.js 22以上, OpenClaw |
 | ネットワーク | 同一LAN内、固定IP推奨 | 同一LAN内、固定IP推奨 |
-| ファイアウォール | Ubuntu PCのIPのみ8081を許可 | 特になし |
+| ファイアウォール | Ubuntu PCのプライベートIPアドレスのみ8081を許可 | 特になし |
 
 ---
 

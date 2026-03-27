@@ -69,7 +69,7 @@ curl http://localhost:8081/v1/models
 ```
 
 > ポートは `docker-compose.yml` によって異なります。
-> GPU版: `8081`、CPU版: `8080`（.envの`LLAMA_PORT`に依存）
+> GPU版: `8081`、CPU版: `8080`（.envの`DOCKER_HOST_PORT_LLAMA`に依存）
 
 ---
 

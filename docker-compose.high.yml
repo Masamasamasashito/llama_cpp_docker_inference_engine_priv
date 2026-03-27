@@ -1,29 +1,34 @@
+#---------------------------------------------------------------------------
+# Global Logging Configuration (Log Rotation)
+#---------------------------------------------------------------------------
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+#---------------------------------------------------------------------------
+# services
+#---------------------------------------------------------------------------
 services:
+
+  #---------------------------------------------------------------------------
+  # llama.cpp GPU service - RTX 5090 Optimized (VRAM 32GB)
+  #---------------------------------------------------------------------------
   llama-cpp-gpu:
-    image: ghcr.io/ggml-org/llama.cpp:server-cuda
+    image: ${COMMON_EO_DOCKER_LLAMA_GPU_IMAGE:-ghcr.io/ggml-org/llama.cpp}:${COMMON_EO_DOCKER_LLAMA_GPU_IMAGE_TAG:-server-cuda}
+    logging: *default-logging
     ports:
-      - "${LLAMA_BIND_ADDRESS:-127.0.0.1}:8081:8080"
+      - "${DOCKER_HOST_BIND_ADDR:-127.0.0.1}:${DOCKER_HOST_PORT_LLAMA:-8081}:${LLAMA_CONTAINER_LISTEN_PORT:-8080}"
     volumes:
       - ./models:/models:ro
     environment:
       - CUDA_VISIBLE_DEVICES=0
-      # RTX5090最適化環境変数（VRAM 32GB）
-      - LLAMA_MODEL_FILE=${LLAMA_MODEL_FILE}
-      - LLAMA_N_GPU_LAYERS=${LLAMA_N_GPU_LAYERS:--1}
-      - LLAMA_CTX_SIZE=${LLAMA_CTX_SIZE:-65536}
-      - LLAMA_BATCH_SIZE=${LLAMA_BATCH_SIZE:-4096}
-      - LLAMA_UBATCH_SIZE=${LLAMA_UBATCH_SIZE:-2048}
-      - LLAMA_THREADS=${LLAMA_THREADS:-24}
-      - LLAMA_N_PARALLEL=${LLAMA_N_PARALLEL:-16}
-      - LLAMA_TEMP=${LLAMA_TEMP:-0.8}
-      - LLAMA_TOP_K=${LLAMA_TOP_K:-40}
-      - LLAMA_TOP_P=${LLAMA_TOP_P:-0.95}
-      - LLAMA_MIN_P=${LLAMA_MIN_P:-0.05}
-      - LLAMA_REPEAT_PENALTY=${LLAMA_REPEAT_PENALTY:-1.1}
+      - TZ=${COMMON_TIMEZONE:-Asia/Tokyo}
     command: >
       -m /models/${LLAMA_MODEL_FILE}
       --host 0.0.0.0
-      --port 8080
+      --port ${LLAMA_CONTAINER_LISTEN_PORT:-8080}
       --api-key ${LLAMA_API_KEY:-}
       --n-gpu-layers 99
       --ctx-size ${LLAMA_CTX_SIZE:-65536}
@@ -40,6 +45,12 @@ services:
       --cont-batching
       --log-verbose
       --mlock
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:${LLAMA_CONTAINER_LISTEN_PORT:-8080}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
     restart: unless-stopped
     runtime: nvidia
     deploy:

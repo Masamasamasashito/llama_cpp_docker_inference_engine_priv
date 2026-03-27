@@ -40,7 +40,7 @@ docker-compose -f docker-compose.high.yml up -d
 ### 1-2. バインドアドレスをプライベートIPに制限
 
 **重要:** デフォルトではdocker-composeは `127.0.0.1`（ローカルのみ）にバインドします。
-LAN内の他PCからアクセスするには、`.env` で `LLAMA_BIND_ADDRESS` をサーバーPCの
+LAN内の他PCからアクセスするには、`.env` で `DOCKER_HOST_BIND_ADDR` をサーバーPCの
 プライベートIPに設定する必要があります。
 
 ```powershell
@@ -51,13 +51,13 @@ ipconfig
 
 ```bash
 # .env に追加（プライベートIPを指定）
-LLAMA_BIND_ADDRESS=192.168.1.100
+DOCKER_HOST_BIND_ADDR=192.168.1.100
 ```
 
 これにより、docker-composeは `192.168.1.100:8081` にのみバインドし、
 `0.0.0.0`（全インターフェース）には公開されません。
 
-> `LLAMA_BIND_ADDRESS` を設定しない場合、`127.0.0.1` にバインドされ
+> `DOCKER_HOST_BIND_ADDR` を設定しない場合、`127.0.0.1` にバインドされ
 > サーバーPC自身からのみアクセス可能です（LAN内の他PCからはアクセス不可）。
 
 ```powershell
