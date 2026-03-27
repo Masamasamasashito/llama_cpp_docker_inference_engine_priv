@@ -142,7 +142,9 @@ curl -H "Authorization: Bearer YOUR_API_KEY" http://192.168.1.100:8081/v1/models
 ```
 
 > 生成されたAPI Keyの値をUbuntu側の担当者に安全に共有してください。
-> Ubuntu側の設定は [Ubuntu Ready Step 3](../ubuntu-ready/03_openclaw_config.md) で行います。
+> Ubuntu側では、このAPI Keyを OpenClawの**プロバイダ**設定（`openclaw.json` の `apiKey`）に登録します。
+> プロバイダ = OpenClawからLLMに接続するためのエンドポイント定義です。
+> 詳細は [Ubuntu Ready Step 3](../ubuntu-ready/03_openclaw_config.md) を参照。
 
 ---
 

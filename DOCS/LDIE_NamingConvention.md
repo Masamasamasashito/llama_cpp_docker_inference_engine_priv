@@ -201,8 +201,9 @@ curl http://localhost:8084/health  # Qwen
 
 ### OpenClaw連携時のポート設計
 
-OpenClawの `openclaw.json` でモデルごとに異なるポートを指定することで、
-1台のWindows LLMサーバーで複数モデルを提供し、Ubuntu側のOpenClawから使い分けることができます。
+OpenClawの `openclaw.json` では、LLMの接続先を**プロバイダ**として登録します。
+モデルごとに異なるプロバイダ（= 異なるポート）を指定することで、
+1台のWindows LLMサーバーで複数モデルを提供し、Ubuntu側のOpenClawから用途別に使い分けることができます。
 
 ```jsonc
 {
@@ -272,6 +273,21 @@ services:
 | `test_request_<モデル名>.py` | `test_request_qwen3.5-27b.py` | モデル別テストリクエスト |
 | `docker-compose.<バリアント>.yml` | `docker-compose.high.yml` | 構成別Docker Compose |
 | `DOCS/<カテゴリ>/` | `DOCS/text-llm/` | カテゴリ別ドキュメント |
+
+### OpenClawプロバイダ名の命名規則
+
+OpenClawの `openclaw.json` に登録するプロバイダ名は以下の規則に従います。
+
+| プロバイダ名 | 用途 | 接続先 |
+|---|---|---|
+| `ldie` | LDIE単一モデル（Pattern A） | ローカルLLMサーバー |
+| `ldie-gemma` | LDIE汎用モデル（Pattern B並行運用時） | ローカル :8081 |
+| `ldie-coder` | LDIEコーディングモデル（Pattern B並行運用時） | ローカル :8085 |
+| `anthropic` | クラウド司令塔（Pattern B） | Anthropic API |
+| `openai` | クラウド司令塔（Pattern B） | OpenAI API |
+
+> プロバイダ名は `openclaw.json` の `models.providers` のキー名であり、
+> `"primary": "プロバイダ名/モデルID"` の形式でモデルを指定します。
 
 ---
 
