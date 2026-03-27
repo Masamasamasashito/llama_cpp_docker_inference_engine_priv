@@ -17,6 +17,23 @@ API連携してAIエージェントを自走させるまでの完全手順です
 
 > Windows側の準備がまだの場合は [OpenClaw連携 セットアップ手順](../openclaw-integration/setup_guide.md) のStep 1を先に完了してください。
 
+## 2つの運用パターン
+
+Step 3（OpenClaw設定）で、どちらのパターンで運用するかを選択します。
+
+| | Pattern A（全ローカル） | Pattern B（司令塔クラウド + 作業役ローカル） |
+|---|---|---|
+| 司令塔 | LDIE（Gemma 3 27B等） | **クラウド（Claude Opus / GPT-4o）** |
+| 作業役 | LDIE | LDIE |
+| 月額 | 電気代 $25-50 | $45-130 |
+| 精度 | 中〜高 | **最高** |
+| オフライン | 可能 | 不可 |
+| プライバシー | **最高** | 中（司令塔経由で一部クラウドに送信） |
+| 移行 | — | Pattern A → B は `openclaw.json` の変更のみ |
+
+> 詳細な比較は [LDIEアーキテクチャ](../LDIE_Architecture.md) を参照。
+> まずPattern Aで始めて、精度が不足したらPattern Bに移行するのが推奨です。
+
 ## ドキュメント
 
 - [1. 環境構築](01_environment_setup.md) — Node.js・OpenClawインストール
