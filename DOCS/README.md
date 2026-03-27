@@ -20,6 +20,7 @@ ComfyUI による動画生成AIの構築・運用ガイドです。
 
 - [セットアップ手順](video-generation/01_setup_guide.md)
 - [利用可能モデル一覧](video-generation/02_available_models.md)
+- [ComfyUI WebUIガイド](video-generation/03_webui_guide.md)
 
 ### [OpenClaw連携](openclaw-integration/README.md)
 
