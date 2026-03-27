@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🦙 Llama.cpp Docker Compose セットアップ
+# 🦙 LDIE — Llama.cpp Docker Inference Engine
 
 <!-- ヘッダー画像例（必要に応じてURLを差し替えてください） -->
 
@@ -9,17 +9,33 @@
 <p>
   <img src="https://img.shields.io/badge/Docker-blue?logo=docker" />
   <img src="https://img.shields.io/badge/Python-3.8+-blue?logo=python" />
-  <img src="https://img.shields.io/badge/Windows-11-blue?logo=windows" />
+  <img src="https://img.shields.io/badge/Windows_11_Pro-blue?logo=windows" />
+  <img src="https://img.shields.io/badge/Ubuntu_24.04-orange?logo=ubuntu" />
+  <img src="https://img.shields.io/badge/RTX_5090-76B900?logo=nvidia" />
 </p>
 
 </div>
 
-Githubリポジトリ : https://github.com/Sunwood-ai-labs/llama-cpp-docker-compose
+> 参照元リポジトリ: [Sunwood-ai-labs/llama-cpp-docker-compose](https://github.com/Sunwood-ai-labs/llama-cpp-docker-compose)
+> （本リポジトリ LDIE は上記をベースに、命名規則・セキュリティ・OpenClaw連携・マルチモデル対応等を大幅に強化したものです）
 
-# 🦙 Llama.cpp Docker Compose セットアップ
+---
 
-WindowsでLlama.cppを簡単に動かすためのDocker Composeセットアップです。
-WebUIはオプションで利用可能、APIサーバーのみの運用も可能です。
+## 概要
+
+llama.cpp をDocker上で動かし、**OpenAI互換API**と**組み込みWebUI**を提供するセットアップです。
+ホームLAN内の他PCのOpenClawにローカルLLMとしてAPIを提供し、AIエージェントを自走させることを主目的としています。
+
+### 主な特徴
+
+- OpenAI互換API（`/v1/chat/completions`）でどんなクライアントからでも利用可能
+- **組み込みWebUI** — llama.cppサーバーにブラウザでアクセスするだけでチャット可能（ChatGPT風）
+- **OpenClaw連携** — LAN内の他PCのAIエージェントにローカルLLMを提供
+- Qwen3.5-27B / Qwen3.5-9B / Gemma 3n E2B 等のマルチモデル対応
+- RTX 5090最適化構成を含むGPU/CPU/High 3種のdocker-compose
+- [LDIE命名規則](DOCS/LDIE_NamingConvention.md) に基づく高品質な変数設計
+- `.env` だけでイメージバージョン・ポート・バインドアドレス・API Key等を一元管理
+- デフォルト `127.0.0.1` バインド + API Key認証によるセキュリティ設計
 
 ---
 
@@ -30,6 +46,7 @@ WebUIはオプションで利用可能、APIサーバーのみの運用も可能
 | テキスト生成 LLM | llama.cpp + Docker によるテキスト生成 | [DOCS/text-llm/](DOCS/text-llm/README.md) |
 | 動画生成 | ComfyUI による動画生成 | [DOCS/video-generation/](DOCS/video-generation/README.md) |
 | OpenClaw連携 | 他PCのOpenClawにローカルLLMを提供 | [DOCS/openclaw-integration/](DOCS/openclaw-integration/README.md) |
+| LDIE 命名規則 | 環境変数・ファイルの命名規則 | [DOCS/LDIE_NamingConvention.md](DOCS/LDIE_NamingConvention.md) |
 
 詳細は [ドキュメント一覧](DOCS/README.md) を参照してください。
 
@@ -38,123 +55,147 @@ WebUIはオプションで利用可能、APIサーバーのみの運用も可能
 ## 📁 ディレクトリ構成
 
 ```
-llama-cpp-docker-compose/
-├── models/                  # モデル(GGUF)ファイル配置用
-├── logs/                    # サーバーログ保存用
-├── example/                 # クライアントサンプルコード
+LDIE/
+├── models/                        # モデル(GGUF)ファイル配置用
+├── logs/                          # サーバーログ保存用
+├── example/                       # クライアントサンプルコード
+│   ├── client_sample_gemma3n-e2b.py
+│   ├── client_sample_qwen3.5-27b.py
+│   ├── client_sample_qwen3.5-9b.py
+│   └── simple_logprobs_test.py
 ├── DOCS/
-│   ├── README.md            # ドキュメントハブ
-│   ├── text-llm/            # テキスト生成LLMドキュメント
-│   │   ├── setup_guide.md
-│   │   └── available_models.md
-│   ├── video-generation/    # 動画生成ドキュメント
-│   │   ├── setup_guide.md
-│   │   └── available_models.md
-│   └── openclaw-integration/ # OpenClaw連携ガイド
-│       ├── setup_guide.md
-│       └── network_config.md
-├── .env.example.*           # モデル別環境変数サンプル
-├── docker-compose.yml       # GPU版（デフォルト）
-├── docker-compose.cpu.yml   # CPU版
-├── docker-compose.high.yml  # RTX 5090向け
+│   ├── README.md                  # ドキュメントハブ
+│   ├── LDIE_NamingConvention.md   # 命名規則リファレンス
+│   ├── text-llm/                  # テキスト生成LLMドキュメント
+│   ├── video-generation/          # 動画生成ドキュメント
+│   └── openclaw-integration/      # OpenClaw連携ガイド
+├── .env.example.gemma3n-e2b       # Gemma 3n E2B 用テンプレート
+├── .env.example.qwen3.5-27b      # Qwen3.5-27B 用テンプレート
+├── .env.example.qwen3.5-9b       # Qwen3.5-9B 用テンプレート
+├── docker-compose.yml             # GPU版（デフォルト）
+├── docker-compose.cpu.yml         # CPU版
+├── docker-compose.high.yml        # RTX 5090向け高性能版
 └── README.md
 ```
 
 ---
 
-## 🚀 セットアップ手順
+## 🚀 クイックスタート
 
 ### 1. リポジトリのクローン
 
 ```bash
-git clone https://github.com/yourusername/llama-cpp-docker-setup.git
-cd llama-cpp-docker-setup
+git clone <your-repo-url>
+cd llama_cpp_docker_inference_engine_priv
 ```
 
-### 2. モデルファイルの配置
+### 2. モデルのダウンロード
 
-`models/`ディレクトリにGGUFファイルを配置してください。
-
-例：
-- `llama-2-7b-chat.Q4_K_M.gguf`
-- `llama-2-13b-chat.Q4_K_M.gguf`
-
-#### ダウンロード例（Gemma 3n E2B モデル）
+`models/` ディレクトリにGGUFファイルを配置します。
 
 ```bash
-curl -L -o gemma3n-e2b-fixed.gguf https://huggingface.co/unsloth/gemma-3n-E2B-it-GGUF/resolve/main/gemma-3n-E2B-it-UD-Q4_K_XL.gguf
-# ダウンロード後、models/ ディレクトリに移動してください
+# Qwen3.5-27B（16.7GB, 推奨）
+curl -L -o models/Qwen3.5-27B-Q4_K_M.gguf \
+  https://huggingface.co/unsloth/Qwen3.5-27B-GGUF/resolve/main/Qwen3.5-27B-Q4_K_M.gguf
+
+# Qwen3.5-9B（5.68GB, 軽量）
+curl -L -o models/Qwen3.5-9B-Q4_K_M.gguf \
+  https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/Qwen3.5-9B-Q4_K_M.gguf
+
+# Gemma 3n E2B
+curl -L -o models/gemma3n-e2b-fixed.gguf \
+  https://huggingface.co/unsloth/gemma-3n-E2B-it-GGUF/resolve/main/gemma-3n-E2B-it-UD-Q4_K_XL.gguf
 ```
 
 ### 3. 環境変数の設定
 
-使いたいモデルの`.env.example.*`をコピーして`.env`を作成してください。
+使いたいモデルの `.env.example.*` をコピーして `.env` を作成します。
 
 ```bash
-# Gemma 3n E2B の場合
-cp .env.example.gemma3n-e2b .env
-
 # Qwen3.5-27B の場合
 cp .env.example.qwen3.5-27b .env
 
 # Qwen3.5-9B の場合
 cp .env.example.qwen3.5-9b .env
+
+# Gemma 3n E2B の場合
+cp .env.example.gemma3n-e2b .env
 ```
 
-### 4. 実行
+> `.env.example.*` はセクション構造化されています。
+> 詳細は [LDIE 命名規則](DOCS/LDIE_NamingConvention.md) を参照してください。
+
+### 4. （オプション）API Key の生成
+
+OpenClaw連携やLAN公開する場合は、API Key認証を有効化してください。
 
 ```bash
-# GPU
+# macOS / Linux
+echo "LLAMA_API_KEY=sk-local-$(openssl rand -hex 32)" >> .env
+```
+
+```powershell
+# Windows PowerShell
+$bytes = New-Object byte[] 32; (New-Object System.Security.Cryptography.RNGCryptoServiceProvider).GetBytes($bytes); $hex = -join ($bytes | ForEach-Object { $_.ToString("x2") }); "LLAMA_API_KEY=sk-local-$hex" | Add-Content .env
+```
+
+### 5. 起動
+
+```bash
+# GPU版（デフォルト）
 docker-compose up -d
 
-# CPU
+# CPU版
 docker-compose -f docker-compose.cpu.yml up -d
 
-# high
+# RTX 5090向け高性能版
 docker-compose -f docker-compose.high.yml up -d
 ```
 
-### 5. 動作確認
+### 6. 動作確認
 
 ```bash
-# ヘルスチェック
-curl http://localhost:8080/health
+# ヘルスチェック（GPU版のデフォルトポートは 8081）
+curl http://localhost:8081/health
 
-# モデル一覧
-curl http://localhost:8080/v1/models
+# モデル一覧（API Key認証を有効化した場合）
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+  http://localhost:8081/v1/models
 ```
 
-### 6. 使い方
+### 7. 使い方
+
+#### WebUI（ブラウザ）
+
+llama.cppサーバーには**組み込みWebUI**が搭載されています。
+ブラウザで以下のURLにアクセスするだけで、ChatGPT風のチャット画面が利用できます。
+
+```
+http://localhost:8081
+```
+
+- テキストファイルやPDFの添付に対応
+- 特別なセットアップ不要（サーバー起動後すぐに利用可能）
+
+#### API（curl / Python）
 
 ```bash
-curl -X POST http://localhost:8080/v1/chat/completions \
+# Chat API（API Key認証あり）
+curl -X POST http://localhost:8081/v1/chat/completions \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
   -d '{
-    "model": "gemma3n-e2b-fixed.gguf",
+    "model": "Qwen3.5-27B-Q4_K_M",
     "messages": [
-      {
-        "role": "user",
-        "content": "こんにちは、あなたは誰ですか？"
-      }
+      {"role": "user", "content": "こんにちは、あなたは誰ですか？"}
     ]
   }'
 ```
 
-### 7. 構成
-
 ```bash
-models/     ← モデル置く（必須）
-logs/       ← ログ
-.env        ← 設定
+# Pythonサンプル
+python example/client_sample_qwen3.5-27b.py
 ```
-
-モード
-
-|モード|用途|
-|---|---|
-|GPU|普通|
-|CPU|検証用|
-|high|RTX 5090用|
 
 ### 8. 停止
 
@@ -162,50 +203,56 @@ logs/       ← ログ
 docker-compose down
 ```
 
-### 9. よくあるハマり
+---
 
-#### ① GPU効かない
+## 🔧 モード一覧
 
-原因：
+| モード | docker-compose | デフォルトポート | 用途 |
+|---|---|---|---|
+| GPU | `docker-compose.yml` | `8081` | 標準GPU推論 |
+| CPU | `docker-compose.cpu.yml` | `8080` | GPU不要の検証用 |
+| High | `docker-compose.high.yml` | `8081` | RTX 5090最適化（VRAM 32GB） |
 
-- NVIDIA Container Toolkit未導入
-- CUDAバージョン不一致
+> ポートは `.env` の `DOCKER_HOST_PORT_LLAMA` で変更可能です。
 
-対策：
+---
 
-- `nvidia-smi`がDocker内で動くか確認
+## 🔒 セキュリティ
 
-#### ② モデルロード失敗
+| レイヤー | 対策 |
+|---|---|
+| バインドアドレス | デフォルト `127.0.0.1`（ローカルのみ）。LAN公開時はプライベートIPを明示指定 |
+| API Key認証 | `--api-key` によるBearer Token認証 |
+| ファイアウォール | 特定プライベートIPのみ許可（OpenClaw連携時） |
 
-原因：
+詳細は [OpenClaw連携 - ネットワーク設定](DOCS/openclaw-integration/network_config.md) を参照してください。
 
-- .env のファイル名ミス
-- パス違い
+---
 
-確認：
+## ❓ よくあるトラブル
 
-- `ls models/`
+| 問題 | 原因・対策 |
+|---|---|
+| GPU効かない | NVIDIA Container Toolkit未導入 / CUDAバージョン不一致。`nvidia-smi` がDocker内で動くか確認 |
+| モデルロード失敗 | `.env` の `LLAMA_MODEL_FILE` と `models/` 内のファイル名が一致しているか確認 |
+| 応答が遅い | CPU実行になっている可能性。`LLAMA_N_GPU_LAYERS=99` を設定して全レイヤーGPUに |
+| ポートに接続できない | GPU版は `8081`、CPU版は `8080` がデフォルト。`docker ps` でポート確認 |
+| 401 Unauthorized | API Key不一致。`.env` の `LLAMA_API_KEY` とリクエストの `Authorization` ヘッダーを確認 |
+| LAN内の他PCから接続不可 | `DOCKER_HOST_BIND_ADDR` がプライベートIPになっているか、ファイアウォールが開いているか確認 |
 
-#### ③ 遅い
+---
 
-仮説：
+## 📊 実務視点の評価
 
-- CPU実行になってる
-- GPUレイヤー不足
+**メリット**
 
-調整：
+- Ollamaより柔軟（パラメータ細かく制御可能）
+- OpenAI互換APIで既存ツール・OpenClawと連携しやすい
+- Dockerなので再現性が高い
+- 組み込みWebUIでブラウザからすぐチャット可能
+- `.env` だけで全設定を一元管理（LDIE命名規則）
 
-- LLAMA_N_GPU_LAYERS=35
+**デメリット**
 
-### 10. 実務視点の評価（重要）
-
-メリット
-
-- Ollamaより柔軟
-- OpenAI互換APIで連携しやすい
-- Dockerなので再現性高い
-
-デメリット
-
-- モデル管理は手動
-- UIなし（完全API）
+- モデル管理は手動（GGUFファイルを自分でダウンロード）
+- 1コンテナ1モデル（モデル切り替えは再起動が必要）
