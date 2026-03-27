@@ -14,7 +14,7 @@
 | 推奨量子化 | Q4_K_M（16.7GB） |
 | HuggingFace | https://huggingface.co/unsloth/Qwen3.5-27B-GGUF |
 | env設定ファイル | `.env.example.qwen3.5-27b` |
-| クライアント例 | `example/test_request_qwen3.5-27b.py` |
+| クライアント例 | `LDIE_TEST_Req/test_request_qwen3.5-27b.py` |
 | 必要VRAM目安 | 約18GB以上（Q4_K_M, 全レイヤーGPU時） |
 
 ### 利用可能な量子化バリエーション
@@ -49,7 +49,7 @@
 | 推奨量子化 | Q4_K_M（5.68GB） |
 | HuggingFace | https://huggingface.co/unsloth/Qwen3.5-9B-GGUF |
 | env設定ファイル | `.env.example.qwen3.5-9b` |
-| クライアント例 | `example/test_request_qwen3.5-9b.py` |
+| クライアント例 | `LDIE_TEST_Req/test_request_qwen3.5-9b.py` |
 | 必要VRAM目安 | 約8GB以上（Q4_K_M, 全レイヤーGPU時） |
 
 ### 利用可能な量子化バリエーション
@@ -83,7 +83,7 @@
 | 推奨量子化 | Q4_K_XL |
 | HuggingFace | https://huggingface.co/unsloth/gemma-3n-E2B-it-GGUF |
 | env設定ファイル | `.env.example.gemma3n-e2b` |
-| クライアント例 | `example/test_request_gemma3n-e2b.py` |
+| クライアント例 | `LDIE_TEST_Req/test_request_gemma3n-e2b.py` |
 
 ---
 

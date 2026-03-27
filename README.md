@@ -133,7 +133,7 @@ LDIE/
 │   ├── .env.example.*                   # モデル別環境変数テンプレート（11種）
 │   ├── models/                          # モデル(GGUF)ファイル配置用
 │   └── logs/                            # サーバーログ保存用
-├── example/                             # テストリクエストスクリプト
+├── LDIE_TEST_Req/                             # テストリクエストスクリプト
 │   ├── test_request_gemma3-27b.py
 │   ├── test_request_qwen3.5-27b.py
 │   ├── test_request_deepseek-r1-32b.py
@@ -274,7 +274,7 @@ curl -X POST http://localhost:8081/v1/chat/completions \
 
 ```bash
 # Pythonテストリクエスト
-python example/test_request_gemma3-27b.py
+python LDIE_TEST_Req/test_request_gemma3-27b.py
 ```
 
 ### 9. 停止

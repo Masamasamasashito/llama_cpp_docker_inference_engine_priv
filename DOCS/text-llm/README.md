@@ -27,7 +27,7 @@ docker-compose up -d
 
 # 5. テスト（リポジトリルートに戻って実行）
 cd ..
-python example/test_request_qwen3.5-9b.py
+python LDIE_TEST_Req/test_request_qwen3.5-9b.py
 ```
 
 ## 関連ファイル（LDIE_Infra_Docker/ 内）
@@ -38,7 +38,7 @@ python example/test_request_qwen3.5-9b.py
 | `docker-compose.cpu.yml` | CPU版 |
 | `docker-compose.high.yml` | RTX 5090向け高性能版 |
 | `.env.example.*` | モデル別環境変数テンプレート |
-| `example/` | クライアントサンプルコード |
+| `LDIE_TEST_Req/` | クライアントサンプルコード |
 
 ---
 

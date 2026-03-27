@@ -85,13 +85,13 @@ curl http://localhost:8081/v1/models
 
 ```bash
 # Qwen3.5-27B
-python example/test_request_qwen3.5-27b.py
+python LDIE_TEST_Req/test_request_qwen3.5-27b.py
 
 # Qwen3.5-9B
-python example/test_request_qwen3.5-9b.py
+python LDIE_TEST_Req/test_request_qwen3.5-9b.py
 
 # Gemma 3n E2B（既存）
-python example/test_request_gemma3n-e2b.py
+python LDIE_TEST_Req/test_request_gemma3n-e2b.py
 ```
 
 ---
