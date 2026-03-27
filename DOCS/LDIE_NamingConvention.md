@@ -114,7 +114,123 @@ DOCKER_HOST_PORT_LLAMA=8081
 
 ---
 
-## 6. シークレット管理
+## 6. ポート設計ガイド（複数モデル並行運用）
+
+多くのOSSプロジェクトでは、複数インスタンスの並行運用時にポートが競合し、手動でのポート管理が必要になります。
+LDIEでは `DOCKER_HOST_PORT_LLAMA` を `.env` で変えるだけで並行運用できる設計になっています。
+
+### 基本原則
+
+- **1024以下は使わない**（特権ポート。root/管理者権限が必要）
+- **既知サービスのポートを避ける**（下記の予約ポート表を参照）
+- **連番で規則性を持たせる**（どのモデル/モードか一目で分かる）
+- **コンテナ内部ポートは変えない**（`LLAMA_CONTAINER_LISTEN_PORT=8080` は固定。ホスト側ポートだけ変える）
+
+### LDIEポート割り当て体系
+
+```
+8081 - 8099: テキスト生成LLM（llama.cpp）
+8100 - 8199: 動画生成（ComfyUI）※将来用
+```
+
+#### デフォルトポート（モード別）
+
+| ポート | モード | docker-compose |
+|---|---|---|
+| `8081` | GPU（デフォルト） | `docker-compose.yml` |
+| `8082` | CPU | `docker-compose.cpu.yml` |
+| `8083` | High（RTX 5090） | `docker-compose.high.yml` |
+
+#### 複数モデル並行運用時のポート割り当て例
+
+| ポート | モデル | 用途 |
+|---|---|---|
+| `8081` | Gemma 3 27B | メイン（安全性最高） |
+| `8084` | Qwen3.5-27B | 日本語汎用 |
+| `8085` | Qwen3-Coder-30B | コーディング |
+| `8086` | Qwen3-32B | 最高品質 |
+| `8087` | Qwen3.5-9B | 軽量・高速 |
+| `8088` | DeepSeek R1 32B | 推論・分析（リスク高。用途を限定） |
+
+### 並行運用の手順
+
+ディレクトリを分けて、各 `.env` でポートとモデルを変えます。
+
+```bash
+# 1. モデル別ディレクトリを作成
+mkdir model-gemma model-qwen
+
+# 2. .env.exampleをコピーしてポートを変更
+cp .env.example.gemma3-27b model-gemma/.env
+cp .env.example.qwen3.5-27b model-qwen/.env
+
+# 3. 各.envでポートを変更
+# model-gemma/.env
+DOCKER_HOST_PORT_LLAMA=8081  # デフォルトのまま
+
+# model-qwen/.env
+DOCKER_HOST_PORT_LLAMA=8084  # 別ポートに変更
+
+# 4. 各ディレクトリからdocker-compose起動
+cd model-gemma && docker-compose up -d
+cd ../model-qwen && docker-compose up -d
+
+# 5. 各モデルにアクセス
+curl http://localhost:8081/health  # Gemma
+curl http://localhost:8084/health  # Qwen
+```
+
+### 避けるべきポート
+
+以下のポートは既知のサービスで使用されるため、LDIEでは使用を避けてください。
+
+| ポート | 使用サービス | 競合リスク |
+|---|---|---|
+| `80` / `443` | HTTP / HTTPS | 高 |
+| `3000` | Grafana / Next.js / Playwright | 高 |
+| `3306` | MySQL | 中 |
+| `5432` | PostgreSQL | 中 |
+| `5678` | n8n | 中 |
+| `6379` | Redis | 中 |
+| `8080` | 多数のWebサーバー・プロキシ | **最高（意図的に避けている）** |
+| `8188` | ComfyUI | 中（動画生成で使用） |
+| `8443` | HTTPS代替 | 低 |
+| `11434` | Ollama | 中 |
+
+> `8080` をLDIEのデフォルトから外しているのは、最も競合リスクが高いポートであるためです。
+
+### OpenClaw連携時のポート設計
+
+OpenClawの `openclaw.json` でモデルごとに異なるポートを指定することで、
+1台のWindows LLMサーバーで複数モデルを提供し、Ubuntu側のOpenClawから使い分けることができます。
+
+```jsonc
+{
+  "models": {
+    "providers": {
+      "local-gemma": {
+        "baseUrl": "http://192.168.1.100:8081/v1",
+        "apiKey": "sk-local-xxx",
+        "api": "openai-completions",
+        "models": [{"id": "gemma-3-27b-it-Q4_K_M", "name": "Gemma 3 27B"}]
+      },
+      "local-qwen-coder": {
+        "baseUrl": "http://192.168.1.100:8085/v1",
+        "apiKey": "sk-local-xxx",
+        "api": "openai-completions",
+        "models": [{"id": "Qwen3-Coder-30B-A3B-Instruct-Q4_K_M", "name": "Qwen3 Coder"}]
+      }
+    }
+  }
+}
+```
+
+> OpenClawが用途に応じてモデルを使い分ける構成が可能になります。
+> ただしモデル数分のVRAMが必要です（RTX 5090 32GBで2モデル同時が現実的な上限）。
+
+---
+
+## 7. シークレット管理
 
 - シークレット値は `.env.example` に**書かない**
 - 生成コマンドを `.env.example` 冒頭に記載し、ユーザーが実行して `.env` 末尾に追記する設計
@@ -130,7 +246,7 @@ $bytes = New-Object byte[] 32; ...; "LLAMA_API_KEY=sk-local-$hex" | Add-Content 
 
 ---
 
-## 7. ログローテーション
+## 8. ログローテーション
 
 全サービスに統一のログ設定を `x-logging` YAMLアンカーで適用します。
 
@@ -148,7 +264,7 @@ services:
 
 ---
 
-## 8. ファイル命名規則
+## 9. ファイル命名規則
 
 | パターン | 例 | 説明 |
 |---|---|---|
@@ -159,7 +275,7 @@ services:
 
 ---
 
-## 9. 変数一覧（全量）
+## 10. 変数一覧（全量）
 
 ### Global
 
