@@ -62,7 +62,7 @@ LDIE/
 │   ├── test_request_gemma3n-e2b.py
 │   ├── test_request_qwen3.5-27b.py
 │   ├── test_request_qwen3.5-9b.py
-│   └── simple_logprobs_test.py
+│   └── test_request_logprobs.py
 ├── DOCS/
 │   ├── README.md                  # ドキュメントハブ
 │   ├── LDIE_NamingConvention.md   # 命名規則リファレンス

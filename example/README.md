@@ -4,4 +4,4 @@
 セットアップや詳細な使い方は[../README.md](../README.md)を参照してください。
 
 - `test_request_gemma3n-e2b.py`: Gemma 3n E2B用APIリクエスト例
-- `simple_logprobs_test.py`: logprobs取得のテスト例
+- `test_request_logprobs.py`: Chat API vs Completion API のlogprobs比較テスト
