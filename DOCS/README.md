@@ -35,3 +35,9 @@ ComfyUI による動画生成AIの構築・運用ガイドです。
 
 環境変数・ファイル・ボリューム等の命名規則リファレンスです。
 LDIE = **L**lama.cpp **D**ocker **I**nference **E**ngine
+
+---
+
+## [LDIE モデルセキュリティ評価](LDIE_ModelSecurityAssessment.md)
+
+採用モデルのセキュリティリスク評価・GGUFサプライチェーン攻撃対策・ローカルLLM採用時の判断基準です。
