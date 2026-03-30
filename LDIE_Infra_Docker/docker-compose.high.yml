@@ -36,7 +36,7 @@ services:
       --ubatch-size ${LLAMA_UBATCH_SIZE:-2048}
       --threads ${LLAMA_THREADS:-24}
       --threads-batch ${LLAMA_THREADS:-24}
-      --parallel ${LLAMA_N_PARALLEL:-16}
+      --parallel ${LLAMA_N_PARALLEL:-1}
       --temp ${LLAMA_TEMP:-0.8}
       --top-k ${LLAMA_TOP_K:-40}
       --top-p ${LLAMA_TOP_P:-0.95}

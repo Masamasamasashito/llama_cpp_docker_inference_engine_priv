@@ -1,0 +1,2 @@
+timestamp,compose_file,port,model,ctx_size,parallel,threads,gpu_layers,ollama,gpu_fan,gpu_temp,gpu_vram_used_mib,tok_per_sec
+"2026-03-28 17:44:35","docker-compose.yml",8081,"Qwen3.5-27B-Q4_K_M.gguf",8192,1,-8,99,stopped,40,27,18530,20.6357716148358
