@@ -8,6 +8,7 @@ LDIEサーバーおよびComfyUIへのテストリクエストスクリプト集
 | ファイル | モデル | 用途 |
 |---|---|---|
 | `test_request_gemma3-27b.py` | Gemma 3 27B | 日本語汎用（安全性最高） |
+| `test_request_gemma4-26b.py` | Gemma 4 26B A4B IT | 日本語汎用・MoE（Google） |
 | `test_request_gemma3n-e2b.py` | Gemma 3n E2B | 軽量テスト |
 | `test_request_qwen3.5-27b.py` | Qwen3.5-27B | 日本語汎用 |
 | `test_request_qwen3.5-9b.py` | Qwen3.5-9B | 軽量・高速 |

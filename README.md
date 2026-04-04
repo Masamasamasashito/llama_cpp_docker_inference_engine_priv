@@ -103,6 +103,7 @@ RTX 5090（VRAM 32GB）をローカルLLM推論に使う際、既存ツールに
 | モデル | 用途 | サイズ(Q4_K_M) | リスク | .env.example |
 |---|---|---|---|---|
 | **Gemma 3 27B** | 日本語汎用（安全性最高） | 16.5GB | 低 | `.env.example.gemma3-27b` |
+| **Gemma 4 26B A4B** | 日本語汎用・MoE（活性~4B） | 15.7GB（UD-Q4_K_M） | 低 | `.env.example.gemma4-26b` |
 | **Gemma 3n E2B** | 軽量テスト | — | 低 | `.env.example.gemma3n-e2b` |
 | **Qwen3.5-27B** | 日本語汎用 | 16.7GB | 中 | `.env.example.qwen3.5-27b` |
 | **Qwen3.5-9B** | 軽量・高速 | 5.68GB | 中 | `.env.example.qwen3.5-9b` |
@@ -133,7 +134,7 @@ LDIE/
 │   ├── docker-compose.cpu.yml           # CPU版
 │   ├── docker-compose.high.yml          # RTX 5090向け高性能版
 │   ├── docker-compose.comfyui.yml       # 動画生成（ComfyUI）
-│   ├── .env.example.*                   # モデル別環境変数テンプレート（11種）
+│   ├── .env.example.*                   # モデル別環境変数テンプレート（12種）
 │   ├── models/                          # モデル(GGUF)ファイル配置用
 │   └── logs/                            # サーバーログ保存用
 ├── LDIE_TEST_Req/                             # テストリクエストスクリプト
@@ -141,7 +142,7 @@ LDIE/
 │   ├── test_request_qwen3.5-27b.py
 │   ├── test_request_deepseek-r1-32b.py
 │   ├── test_request_ltx-video.py
-│   └── ...（全12ファイル）
+│   └── ...（全13ファイル）
 ├── DOCS/
 │   ├── README.md                        # ドキュメントハブ
 │   ├── LDIE_Architecture.md             # アーキテクチャ（2パターン）
@@ -182,6 +183,10 @@ cd LDIE_Infra_Docker
 curl -L -o models/gemma-3-27b-it-Q4_K_M.gguf \
   https://huggingface.co/unsloth/gemma-3-27b-it-GGUF/resolve/main/gemma-3-27b-it-Q4_K_M.gguf
 
+# Gemma 4 26B A4B IT（約15.7GB, UD-Q4_K_M・MoE）
+curl -L -o models/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf \
+  https://huggingface.co/unsloth/gemma-4-26B-A4B-it-GGUF/resolve/main/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf
+
 # Qwen3.5-27B（16.7GB, 日本語汎用）
 curl -L -o models/Qwen3.5-27B-Q4_K_M.gguf \
   https://huggingface.co/unsloth/Qwen3.5-27B-GGUF/resolve/main/Qwen3.5-27B-Q4_K_M.gguf
@@ -200,6 +205,9 @@ curl -L -o models/Qwen3.5-9B-Q4_K_M.gguf \
 ```bash
 # Gemma 3 27B の場合（安全性最高・推奨）
 cp .env.example.gemma3-27b .env
+
+# Gemma 4 26B A4B IT の場合（MoE）
+cp .env.example.gemma4-26b .env
 
 # Qwen3.5-27B の場合
 cp .env.example.qwen3.5-27b .env

@@ -30,6 +30,13 @@ curl -L -o models/Qwen3.5-9B-Q4_K_M.gguf \
   https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/Qwen3.5-9B-Q4_K_M.gguf
 ```
 
+### Gemma 4 26B A4B IT（UD-Q4_K_M: 約15.7GB）
+
+```bash
+curl -L -o models/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf \
+  https://huggingface.co/unsloth/gemma-4-26B-A4B-it-GGUF/resolve/main/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf
+```
+
 > 別の量子化を使いたい場合は [利用可能モデル一覧](02_available_models.md) を参照してください。
 
 ---
@@ -47,6 +54,9 @@ cp .env.example.qwen3.5-9b .env
 
 # Gemma 3n E2B の場合（既存）
 cp .env.example.gemma3n-e2b .env
+
+# Gemma 4 26B A4B IT の場合
+cp .env.example.gemma4-26b .env
 ```
 
 ---
@@ -92,6 +102,9 @@ python LDIE_TEST_Req/test_request_qwen3.5-9b.py
 
 # Gemma 3n E2B（既存）
 python LDIE_TEST_Req/test_request_gemma3n-e2b.py
+
+# Gemma 4 26B A4B IT
+python LDIE_TEST_Req/test_request_gemma4-26b.py
 ```
 
 ---
