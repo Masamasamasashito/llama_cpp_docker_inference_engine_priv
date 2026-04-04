@@ -56,6 +56,12 @@ openclaw onboard
 
 > セットアップ完了後、`~/.openclaw/openclaw.json` が作成されます。
 
+### OpenClaw更新
+
+```bash
+npm update -g @anthropic-ai/openclaw
+```
+
 ## 1-6. 固定プライベートIPの設定（推奨）
 
 Windows側のファイアウォールでUbuntuのIPを許可するため、固定IPにします。
