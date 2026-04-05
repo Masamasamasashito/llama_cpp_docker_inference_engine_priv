@@ -138,7 +138,7 @@ LDIE/
 │   ├── models/                          # モデル(GGUF)ファイル配置用
 │   └── logs/                            # サーバーログ保存用
 ├── LDIE_TEST_Req/                             # テストリクエストスクリプト
-│   ├── test_request_gemma3-27b.py
+│   ├── test_request_gemma4-26b.py
 │   ├── test_request_qwen3.5-27b.py
 │   ├── test_request_deepseek-r1-32b.py
 │   ├── test_request_ltx-video.py
@@ -179,10 +179,6 @@ cd LDIE_Infra_Docker
 `models/` ディレクトリにGGUFファイルを配置します。
 
 ```bash
-# Gemma 3 27B（16.5GB, 安全性最高・推奨）
-curl -L -o models/gemma-3-27b-it-Q4_K_M.gguf \
-  https://huggingface.co/unsloth/gemma-3-27b-it-GGUF/resolve/main/gemma-3-27b-it-Q4_K_M.gguf
-
 # Gemma 4 26B A4B IT（約15.7GB, UD-Q4_K_M・MoE）
 curl -L -o models/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf \
   https://huggingface.co/unsloth/gemma-4-26B-A4B-it-GGUF/resolve/main/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf
@@ -203,9 +199,6 @@ curl -L -o models/Qwen3.5-9B-Q4_K_M.gguf \
 使いたいモデルの `.env.example.*` をコピーして `.env` を作成します。
 
 ```bash
-# Gemma 3 27B の場合（安全性最高・推奨）
-cp .env.example.gemma3-27b .env
-
 # Gemma 4 26B A4B IT の場合（MoE）
 cp .env.example.gemma4-26b .env
 
@@ -250,8 +243,7 @@ docker-compose -f docker-compose.high.yml up -d
 curl http://localhost:8081/health
 
 # モデル一覧（API Key認証を有効化した場合）
-curl -H "Authorization: Bearer YOUR_API_KEY" \
-  http://localhost:8081/v1/models
+curl -H "Authorization: Bearer YOUR_API_KEY" http://localhost:8081/v1/models
 ```
 
 ### 8. 使い方
@@ -276,11 +268,30 @@ curl -X POST http://localhost:8081/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -d '{
-    "model": "gemma-3-27b-it-Q4_K_M",
+    "model": "gemma-4-26B-A4B-it-UD-Q4_K_M",
     "messages": [
       {"role": "user", "content": "こんにちは、あなたは誰ですか？"}
     ]
   }'
+```
+
+#### Authorization無し版
+
+```bash
+curl -X POST http://localhost:8081/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gemma-4-26B-A4B-it-UD-Q4_K_M",
+    "messages": [
+      {"role": "user", "content": "こんにちは、あなたは誰ですか？"}
+    ]
+  }'
+```
+
+ワンライナー版
+
+```bash
+curl -X POST http://localhost:8081/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "gemma-4-26B-A4B-it-UD-Q4_K_M", "messages": [      {"role": "user", "content": "こんにちは、あなたは誰ですか？"}  ]  }'
 ```
 
 ```bash

@@ -3,6 +3,9 @@
 ホームLAN内でllama.cppサーバー（Windows 11 Pro）を
 OpenClawクライアント（Ubuntu 24.04.4 LTS）に公開するためのネットワーク設定です。
 
+- GUI
+  - Windows Defender ファイアウォール > (左ペイン)詳細設定 > 受信の規則 > Ubuntu OpenClaw Access to Gemma only Local
+
 **設計方針: Windows 11 Pro側のセキュリティを最大限に確保する**
 
 ---

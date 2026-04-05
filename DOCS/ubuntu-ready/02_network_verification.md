@@ -67,7 +67,7 @@ curl -s -o /dev/null -w "%{http_code}" \
 # 期待結果: 200
 ```
 
-## 2-5. 推論テスト
+## 2-5. 推論テスト API Keyあり
 
 ```bash
 curl -X POST http://192.168.1.100:8081/v1/chat/completions \
@@ -80,6 +80,23 @@ curl -X POST http://192.168.1.100:8081/v1/chat/completions \
 ```
 
 JSONレスポンスが返ればネットワーク確認は完了です。
+
+## 2-6. 推論テスト API Keyなし
+
+```bash
+curl -X POST http://192.168.1.100:8081/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [{"role": "user", "content": "Hello, who are you?"}],
+    "max_tokens": 50
+  }'
+```
+
+curl -X POST http://192.168.1.100:8081/v1/chat/completions -H "Content-Type: application/json" -d '{ "messages": [{"role": "user", "content": "Hello, who are you?"}], "max_tokens": 50 }'
+```
+
+JSONレスポンスが返ればネットワーク確認は完了です。
+
 
 ## 2-6. 確認チェックリスト
 
