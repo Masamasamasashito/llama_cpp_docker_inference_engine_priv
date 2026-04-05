@@ -410,6 +410,7 @@ curl -s http://<WindowsのプライベートIPアドレス>:8081/health
 
 - **確認**: `openclaw models list --provider ldie` でモデルが列挙されることを確認する。
 - **起動**: ワークスペースで `openclaw` を実行し、会話・自走ができるか試す。詳細は [動作確認・自走テスト](DOCS/ubuntu-ready/04_run_and_test.md)。
+- **2回目以降の起動**: `openclaw gateway`
 
 ### Windows PC 側（再掲）
 
