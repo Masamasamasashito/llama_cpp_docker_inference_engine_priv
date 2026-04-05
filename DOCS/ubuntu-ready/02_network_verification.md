@@ -5,8 +5,6 @@ Ubuntu PCからWindows LDIEサーバーへの疎通を確認します。
 > 以下の例では Windows LDIEサーバーのプライベートIPを `192.168.1.100`、
 > ポートを `8081`（GPU版デフォルト）としています。実際の値に置き換えてください。
 
----
-
 ## 2-1. Windows側で確認しておく情報
 
 Ubuntu側の作業を始める前に、Windows側の以下の値を控えてください。
@@ -92,11 +90,12 @@ curl -X POST http://192.168.1.100:8081/v1/chat/completions \
   }'
 ```
 
+### ワンライナー版
+```bash
 curl -X POST http://192.168.1.100:8081/v1/chat/completions -H "Content-Type: application/json" -d '{ "messages": [{"role": "user", "content": "Hello, who are you?"}], "max_tokens": 50 }'
 ```
 
-JSONレスポンスが返ればネットワーク確認は完了です。
-
+JSONレスポンスが返ればネットワーク確認は完了
 
 ## 2-6. 確認チェックリスト
 
@@ -108,6 +107,5 @@ JSONレスポンスが返ればネットワーク確認は完了です。
 | 4 | 認証あり | `curl -H "Authorization: ..." .../v1/models` | 200 + モデル一覧 |
 | 5 | 推論 | `curl -X POST .../v1/chat/completions` | 生成テキストが返る |
 
----
 
 [← 環境構築](01_environment_setup.md) | [次: OpenClaw設定 →](03_openclaw_config.md) | [Ubuntu Readyトップ](README.md)

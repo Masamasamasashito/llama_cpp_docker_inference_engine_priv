@@ -12,18 +12,14 @@ llama.cppサーバーには**組み込みWebUI**が搭載されています。
 LDIEサーバー起動後、Windows 11 Proのブラウザで以下にアクセス:
 
 ```
-http://localhost:8081
+http://localhost（推論エンジンを稼働させるホストOSにおけるLANエンドポイントとしてのプライベートIPアドレス）:8081
 ```
 
 | モード | URL |
 |---|---|
-| GPU版（デフォルト） | `http://localhost:8081` |
-| CPU版 | `http://localhost:8082` |
-| High版（RTX 5090） | `http://localhost:8083` |
-
-> ポートを変更している場合は `.env` の `DOCKER_HOST_PORT_LLAMA` の値に合わせてください。
-
----
+| GPU版（デフォルト） | `http://localhost（推論エンジンを稼働させるホストOSにおけるLANエンドポイントとしてのプライベートIPアドレス）:8081` |
+| CPU版 | `http://localhost（推論エンジンを稼働させるホストOSにおけるLANエンドポイントとしてのプライベートIPアドレス）:8082` |
+| High版（RTX 5090） | `http://localhost（推論エンジンを稼働させるホストOSにおけるLANエンドポイントとしてのプライベートIPアドレス）:8083` |
 
 ## 主な機能
 
@@ -74,4 +70,4 @@ WebUIにアクセスすると認証プロンプトが表示されます。
 
 ---
 
-[セットアップ手順](01_setup_guide.md) | [利用可能モデル一覧](02_available_models.md) | [テキスト生成LLMトップ](README.md)
+[セットアップ手順](01_setup_guide.md) | [テキスト生成LLMトップ](README.md)

@@ -1,8 +1,6 @@
 # セットアップ手順
 
-モデルのダウンロードからAPI実行までの手順です。
-
----
+モデルのダウンロードからAPI提供稼働までの手順
 
 ## 0. Docker作業ディレクトリに移動
 
@@ -15,24 +13,6 @@ cd LDIE_Infra_Docker
 ## 1. モデルのダウンロード
 
 `models/` ディレクトリにGGUFファイルをダウンロードします。
-
-### Qwen3.5-27B（Q4_K_M: 16.7GB）
-
-```bash
-curl -L -o models/Qwen3.5-27B-Q4_K_M.gguf https://huggingface.co/unsloth/Qwen3.5-27B-GGUF/resolve/main/Qwen3.5-27B-Q4_K_M.gguf
-```
-
-### Qwen3.5-9B（Q4_K_M: 5.68GB）
-
-```bash
-curl -L -o models/Qwen3.5-9B-Q4_K_M.gguf https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/Qwen3.5-9B-Q4_K_M.gguf
-```
-
-### Gemma 4 26B A4B IT（UD-Q4_K_M: 約15.7GB）
-
-```bash
-curl -L -o models/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf https://huggingface.co/unsloth/gemma-4-26B-A4B-it-GGUF/resolve/main/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf
-```
 
 ### Gemma 4 31B IT（Q4_K_M: 約17.1GB・Dense）
 
@@ -52,18 +32,6 @@ curl -L -o models/gemma-4-31B-it-Q4_K_M.gguf https://huggingface.co/unsloth/gemm
 使いたいモデルに対応する `.env.example.*` を `.env` にコピーします。
 
 ```bash
-# Qwen3.5-27B の場合
-cp .env.example.qwen3.5-27b .env
-
-# Qwen3.5-9B の場合
-cp .env.example.qwen3.5-9b .env
-
-# Gemma 3n E2B の場合（既存）
-cp .env.example.gemma3n-e2b .env
-
-# Gemma 4 26B A4B IT の場合
-cp .env.example.gemma4-26b .env
-
 # Gemma 4 31B IT の場合（Dense・公式 gemma-4-31B-it の GGUF）
 cp .env.example.gemma4-31b .env
 ```
@@ -74,58 +42,42 @@ cp .env.example.gemma4-31b .env
 # GPU版（デフォルト）
 docker-compose up -d
 
-# CPU版
+# CPU版（未着手）
 docker-compose -f docker-compose.cpu.yml up -d
 
-# RTX 5090向け高性能版
+# RTX 5090向け高性能版（未着手）
 docker-compose -f docker-compose.high.yml up -d
+
+# agents版（OpenClaw向け）
+docker-compose -f docker-compose.agents.yml up -d
 ```
-
-
 
 ## 4. 動作確認
 
 ```bash
 # ヘルスチェック
-curl http://localhost:8081/health
+curl http://localhost（推論エンジンを稼働させるホストOSにおけるLANエンドポイントとしてのプライベートIPアドレス）:8081/health
 
 # モデル一覧
-curl http://localhost:8081/v1/models
+curl http://localhost（推論エンジンを稼働させるホストOSにおけるLANエンドポイントとしてのプライベートIPアドレス）:8081/v1/models
 ```
 
 > ポートは `docker-compose.yml` によって異なります。
-> GPU版: `8081`、CPU版: `8082`、High版: `8083`（.envの`DOCKER_HOST_PORT_LLAMA`に依存）
-
+> GPU版（デフォルト）: `8081`、CPU版: `8082`高性能版: `8083`（.envの`DOCKER_HOST_PORT_LLAMA`に依存）
 
 
 ## 5. クライアントからテスト
 
 ```bash
-# Qwen3.5-27B
-python LDIE_TEST_Req/test_request_qwen3.5-27b.py
-
-# Qwen3.5-9B
-python LDIE_TEST_Req/test_request_qwen3.5-9b.py
-
-# Gemma 3n E2B（既存）
-python LDIE_TEST_Req/test_request_gemma3n-e2b.py
-
-# Gemma 4 26B A4B IT
-python LDIE_TEST_Req/test_request_gemma4-26b.py
-
 # Gemma 4 31B IT
 python LDIE_TEST_Req/test_request_gemma4-31b.py
 ```
-
----
 
 ## 6. 停止
 
 ```bash
 docker-compose down
 ```
-
----
 
 ## モデル切り替え
 
@@ -136,8 +88,6 @@ docker-compose down
 cp .env.example.qwen3.5-9b .env
 docker-compose up -d
 ```
-
----
 
 ## トラブルシューティング
 
