@@ -157,16 +157,14 @@ LDIE/
 
 ---
 
-## 🚀 クイックスタート
-
-### 1. リポジトリのクローン
+## 1. リポジトリのクローン
 
 ```bash
 git clone https://github.com/Masamasamasashito/llama_cpp_docker_inference_engine_priv.git
 cd llama_cpp_docker_inference_engine_priv
 ```
 
-### 2. Docker作業ディレクトリに移動
+## 2. Docker作業ディレクトリに移動
 
 ```bash
 cd LDIE_Infra_Docker
@@ -174,7 +172,7 @@ cd LDIE_Infra_Docker
 
 > 以降のdocker-compose・.env・modelsの操作はすべて `LDIE_Infra_Docker/` 内で行います。
 
-### 3. モデルのダウンロード
+## 3. モデルのダウンロード
 
 `models/` ディレクトリにGGUFファイルを配置します。
 
@@ -194,7 +192,19 @@ curl -L -o models/Qwen3.5-9B-Q4_K_M.gguf \
 
 > 全モデルのダウンロードURLは各 `.env.example.*` ファイルの冒頭に記載されています。
 
-### 4. 環境変数の設定
+## 4. Ubuntu PCのプライベートIP確認
+
+```bash
+# Ubuntu PCのプライベートIP確認
+ip addr show
+```
+
+```
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP>
+    inet 192.168.1.200/24 brd 192.168.1.255    ← 自分のプライベートIP
+```
+
+## 5. 環境変数の設定
 
 使いたいモデルの `.env.example.*` をコピーして `.env` を作成します。
 
@@ -209,7 +219,7 @@ cp .env.example.qwen3.5-27b .env
 > `.env.example.*` はセクション構造化されています。
 > 詳細は [LDIE 命名規則](DOCS/LDIE_NamingConvention.md) を参照してください。
 
-### 5. （オプション）API Key の生成
+## 6. （オプション）API Key の生成
 
 OpenClaw連携やLAN公開する場合は、API Key認証を有効化してください。
 
@@ -223,7 +233,11 @@ echo "LLAMA_API_KEY=sk-local-$(openssl rand -hex 32)" >> .env
 $bytes = New-Object byte[] 32; (New-Object System.Security.Cryptography.RNGCryptoServiceProvider).GetBytes($bytes); $hex = -join ($bytes | ForEach-Object { $_.ToString("x2") }); "LLAMA_API_KEY=sk-local-$hex" | Add-Content .env
 ```
 
-### 6. 起動
+## 7. Dockerホストバインドアドレス設定
+
+DOCKER_HOST_BIND_ADDR=<Ubuntu PCのプライベートIP>
+
+## 8. 起動
 
 ```bash
 # GPU版（デフォルト）
@@ -236,14 +250,35 @@ docker-compose -f docker-compose.cpu.yml up -d
 docker-compose -f docker-compose.high.yml up -d
 ```
 
-### 7. 動作確認
+## 9. Windows Defender ファイアウォールのローカルネットワークにおける8081ポートとUbuntu PCのプライベートIPを許可
+
+受信の規則で新しい規則を作成し、8081ポートを許可する
+
+1. コントロールパネル > システムとセキュリティ > Windows Defender ファイアウォール > (左ペイン)詳細設定 > ローカルコンピューターのセキュリティが強化されたWindows Defender ファイアウォール > 受信の規則 > 新しい規則
+2. 受信の規則 > ポート > 次へ > TCP,特定のローカルポート,8081 > 次へ > 接続を許可する > 次へ > プロファイル > プライベート > 次へ > 名前: LLAMA_API_Port_and_Private_IP > 完了
+3. 受信の規則 > LLAMA_API_Port_and_Private_IPを探し、右クリック > プロパティ > スコープ > ローカルIPアドレス > これらのIPアドレス > 追加 > このIPアドレスまたはサブネット > Ubuntu PCのプライベートIPを入力 > OK > 適用 > OK
+
+## 10. WindowsのプライベートIPアドレスを確認
+
+```bash
+# WindowsのプライベートIPアドレス確認
+ipconfig
+```
+
+```bash
+# 表示例
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP>
+    inet 192.168.1.200/24 brd 192.168.1.255    ← 自分のプライベートIP
+```
+
+## 11. 動作確認
 
 ```bash
 # ヘルスチェック（GPU版のデフォルトポートは 8081）
-curl http://localhost:8081/health
+curl http://<WindowsのプライベートIPアドレス>:8081/health
 
 # モデル一覧（API Key認証を有効化した場合）
-curl -H "Authorization: Bearer YOUR_API_KEY" http://localhost:8081/v1/models
+curl -H "Authorization: Bearer YOUR_API_KEY" http://<WindowsのプライベートIPアドレス>:8081/v1/models
 ```
 
 ### 8. 使い方
@@ -254,7 +289,7 @@ llama.cppサーバーには**組み込みWebUI**が搭載されています。
 ブラウザで以下のURLにアクセスするだけで、ChatGPT風のチャット画面が利用できます。
 
 ```
-http://localhost:8081
+http://<WindowsのプライベートIPアドレス>:8081
 ```
 
 - テキストファイルやPDFの添付に対応
@@ -264,7 +299,7 @@ http://localhost:8081
 
 ```bash
 # Chat API（API Key認証あり）
-curl -X POST http://localhost:8081/v1/chat/completions \
+curl -X POST http://<WindowsのプライベートIPアドレス>:8081/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -d '{
@@ -278,7 +313,7 @@ curl -X POST http://localhost:8081/v1/chat/completions \
 #### Authorization無し版
 
 ```bash
-curl -X POST http://localhost:8081/v1/chat/completions \
+curl -X POST http://<WindowsのプライベートIPアドレス>:8081/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gemma-4-26B-A4B-it-UD-Q4_K_M",
@@ -291,7 +326,7 @@ curl -X POST http://localhost:8081/v1/chat/completions \
 ワンライナー版
 
 ```bash
-curl -X POST http://localhost:8081/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "gemma-4-26B-A4B-it-UD-Q4_K_M", "messages": [      {"role": "user", "content": "こんにちは、あなたは誰ですか？"}  ]  }'
+curl -X POST http://<WindowsのプライベートIPアドレス>:8081/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "gemma-4-26B-A4B-it-UD-Q4_K_M", "messages": [      {"role": "user", "content": "こんにちは、あなたは誰ですか？"}  ]  }'
 ```
 
 ```bash

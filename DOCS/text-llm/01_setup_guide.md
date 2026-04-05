@@ -56,8 +56,6 @@ cp .env.example.gemma3n-e2b .env
 cp .env.example.gemma4-26b .env
 ```
 
----
-
 ## 3. サーバー起動
 
 ```bash
@@ -71,7 +69,7 @@ docker-compose -f docker-compose.cpu.yml up -d
 docker-compose -f docker-compose.high.yml up -d
 ```
 
----
+
 
 ## 4. 動作確認
 
@@ -86,7 +84,7 @@ curl http://localhost:8081/v1/models
 > ポートは `docker-compose.yml` によって異なります。
 > GPU版: `8081`、CPU版: `8082`、High版: `8083`（.envの`DOCKER_HOST_PORT_LLAMA`に依存）
 
----
+
 
 ## 5. クライアントからテスト
 
