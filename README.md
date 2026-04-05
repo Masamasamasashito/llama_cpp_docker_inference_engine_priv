@@ -156,6 +156,7 @@ LDIE/
 ```
 
 ---
+# Quick Start
 
 ## 1. リポジトリのクローン
 
@@ -256,7 +257,7 @@ docker-compose -f docker-compose.high.yml up -d
 
 1. コントロールパネル > システムとセキュリティ > Windows Defender ファイアウォール > (左ペイン)詳細設定 > ローカルコンピューターのセキュリティが強化されたWindows Defender ファイアウォール > 受信の規則 > 新しい規則
 2. 受信の規則 > ポート > 次へ > TCP,特定のローカルポート,8081 > 次へ > 接続を許可する > 次へ > プロファイル > プライベート > 次へ > 名前: LLAMA_API_Port_and_Private_IP > 完了
-3. 受信の規則 > LLAMA_API_Port_and_Private_IPを探し、右クリック > プロパティ > スコープ > ローカルIPアドレス > これらのIPアドレス > 追加 > このIPアドレスまたはサブネット > Ubuntu PCのプライベートIPを入力 > OK > 適用 > OK
+3. 受信の規則 > LLAMA_API_Port_and_Private_IPを探し、右クリック > プロパティ > スコープ > リモートIPアドレス > これらのIPアドレス > 追加 > このIPアドレスまたはサブネット > Ubuntu PCのプライベートIPを入力 > OK > 適用 > OK
 
 ## 10. WindowsのプライベートIPアドレスを確認
 
@@ -397,3 +398,68 @@ docker-compose down
 
 - モデル管理は手動（GGUFファイルを自分でダウンロード）
 - 1コンテナ1モデル（モデル切り替えは再起動が必要）
+
+---
+
+## OpenClaw起動とLDIEサーバー連携
+
+クイックスタート（手順1〜11）まで完了し、Ubuntu から次が成功していること
+
+```bash
+curl -s http://<WindowsのプライベートIPアドレス>:8081/health
+```
+
+### Ubuntu PC（OpenClaw）側
+
+1. **環境**: Node.js 22 以上。詳細は [Ubuntu Ready — 環境構築](DOCS/ubuntu-ready/01_environment_setup.md) を参照。
+2. **初回セットアップ**: `openclaw onboard` を実行し、`~/.openclaw/openclaw.json` を生成する。
+3. **LDIE をプロバイダとして登録**: [OpenClaw設定（Pattern A 例）](DOCS/ubuntu-ready/03_openclaw_config.md) に従い `openclaw.json` を編集する。
+   - `models.providers` にプロバイダ（例: `ldie`）を追加し、`baseUrl` を `http://<WindowsのプライベートIP>:8081/v1` にする（末尾は必ず `/v1`）。
+   - `apiKey` を Windows の `LDIE_Infra_Docker/.env` の `LLAMA_API_KEY` と**同じ値**にする（未設定の場合は双方とも未設定のまま）。
+   - `models[].id` は、Windows で `curl .../v1/models`（要 Bearer）の応答にある **`id` と完全一致**させる（例: Gemma 4 なら `gemma-4-26B-A4B-it-UD-Q4_K_M`）。
+   - `agents.defaults.model.primary` を `プロバイダ名/id` 形式にする（例: `ldie/gemma-4-26B-A4B-it-UD-Q4_K_M`）。
+   - `contextWindow` は `.env` の `LLAMA_CTX_SIZE` に合わせる。
+
+#### openclaw.json の例（Pattern A・Gemma 4 26B）
+
+`~/.openclaw/openclaw.json` を、次のように**丸ごと差し替えてもよい**最小例です（`onboard` 済みで他セクションがある場合は `agents` / `models` だけマージしてもよい）。`<WindowsのプライベートIPアドレス>` と `apiKey` は環境に合わせて置き換えてください。
+
+```json
+{
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "ldie/gemma-4-26B-A4B-it-UD-Q4_K_M"
+      }
+    }
+  },
+  "models": {
+    "providers": {
+      "ldie": {
+        "baseUrl": "http://<WindowsのプライベートIPアドレス>:8081/v1",
+        "apiKey": "sk-local-your-secret-key-here",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "gemma-4-26B-A4B-it-UD-Q4_K_M",
+            "name": "Gemma 4 26B A4B IT (Local)",
+            "reasoning": false,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "contextWindow": 8192,
+            "maxTokens": 4096
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+- **確認**: `openclaw models list --provider ldie` でモデルが列挙されることを確認する。
+- **起動**: ワークスペースで `openclaw` を実行し、会話・自走ができるか試す。詳細は [動作確認・自走テスト](DOCS/ubuntu-ready/04_run_and_test.md)。
+
+### Windows PC 側（再掲）
+
+LAN 公開・API Key・ファイアウォールは [OpenClaw連携 セットアップ手順](DOCS/openclaw-integration/01_setup_guide.md) の Step 1〜3 に従う。ネットワークの細部は [ネットワーク設定](DOCS/openclaw-integration/02_network_config.md)、全体像は [LDIE アーキテクチャ](DOCS/LDIE_Architecture.md) を参照。
+
