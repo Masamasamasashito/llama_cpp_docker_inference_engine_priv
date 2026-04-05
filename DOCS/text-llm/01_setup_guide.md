@@ -34,6 +34,15 @@ curl -L -o models/Qwen3.5-9B-Q4_K_M.gguf https://huggingface.co/unsloth/Qwen3.5-
 curl -L -o models/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf https://huggingface.co/unsloth/gemma-4-26B-A4B-it-GGUF/resolve/main/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf
 ```
 
+### Gemma 4 31B IT（Q4_K_M: 約17.1GB・Dense）
+
+公式: [google/gemma-4-31B-it](https://huggingface.co/google/gemma-4-31B-it)  
+GGUF（llama.cpp）:
+
+```bash
+curl -L -o models/gemma-4-31B-it-Q4_K_M.gguf https://huggingface.co/unsloth/gemma-4-31B-it-GGUF/resolve/main/gemma-4-31B-it-Q4_K_M.gguf
+```
+
 > 別の量子化を使いたい場合は [利用可能モデル一覧](02_available_models.md) を参照してください。
 
 ---
@@ -54,6 +63,9 @@ cp .env.example.gemma3n-e2b .env
 
 # Gemma 4 26B A4B IT の場合
 cp .env.example.gemma4-26b .env
+
+# Gemma 4 31B IT の場合（Dense・公式 gemma-4-31B-it の GGUF）
+cp .env.example.gemma4-31b .env
 ```
 
 ## 3. サーバー起動
@@ -100,6 +112,9 @@ python LDIE_TEST_Req/test_request_gemma3n-e2b.py
 
 # Gemma 4 26B A4B IT
 python LDIE_TEST_Req/test_request_gemma4-26b.py
+
+# Gemma 4 31B IT
+python LDIE_TEST_Req/test_request_gemma4-31b.py
 ```
 
 ---

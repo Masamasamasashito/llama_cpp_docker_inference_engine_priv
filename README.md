@@ -104,6 +104,7 @@ RTX 5090（VRAM 32GB）をローカルLLM推論に使う際、既存ツールに
 |---|---|---|---|---|
 | **Gemma 3 27B** | 日本語汎用（安全性最高） | 16.5GB | 低 | `.env.example.gemma3-27b` |
 | **Gemma 4 26B A4B** | 日本語汎用・MoE（活性~4B） | 15.7GB（UD-Q4_K_M） | 低 | `.env.example.gemma4-26b` |
+| **Gemma 4 31B IT** | 日本語汎用・Dense（[公式](https://huggingface.co/google/gemma-4-31B-it)） | 17.1GB（Q4_K_M） | 低 | `.env.example.gemma4-31b` |
 | **Gemma 3n E2B** | 軽量テスト | — | 低 | `.env.example.gemma3n-e2b` |
 | **Qwen3.5-27B** | 日本語汎用 | 16.7GB | 中 | `.env.example.qwen3.5-27b` |
 | **Qwen3.5-9B** | 軽量・高速 | 5.68GB | 中 | `.env.example.qwen3.5-9b` |
@@ -134,15 +135,16 @@ LDIE/
 │   ├── docker-compose.cpu.yml           # CPU版
 │   ├── docker-compose.high.yml          # RTX 5090向け高性能版
 │   ├── docker-compose.comfyui.yml       # 動画生成（ComfyUI）
-│   ├── .env.example.*                   # モデル別環境変数テンプレート（12種）
+│   ├── .env.example.*                   # モデル別環境変数テンプレート（13種）
 │   ├── models/                          # モデル(GGUF)ファイル配置用
 │   └── logs/                            # サーバーログ保存用
 ├── LDIE_TEST_Req/                             # テストリクエストスクリプト
 │   ├── test_request_gemma4-26b.py
+│   ├── test_request_gemma4-31b.py
 │   ├── test_request_qwen3.5-27b.py
 │   ├── test_request_deepseek-r1-32b.py
 │   ├── test_request_ltx-video.py
-│   └── ...（全13ファイル）
+│   └── ...（全14ファイル）
 ├── DOCS/
 │   ├── README.md                        # ドキュメントハブ
 │   ├── LDIE_Architecture.md             # アーキテクチャ（2パターン）
@@ -179,16 +181,16 @@ cd LDIE_Infra_Docker
 
 ```bash
 # Gemma 4 26B A4B IT（約15.7GB, UD-Q4_K_M・MoE）
-curl -L -o models/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf \
-  https://huggingface.co/unsloth/gemma-4-26B-A4B-it-GGUF/resolve/main/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf
+curl -L -o models/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf https://huggingface.co/unsloth/gemma-4-26B-A4B-it-GGUF/resolve/main/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf
+
+# Gemma 4 31B IT（約17.1GB, Q4_K_M・Dense・公式: huggingface.co/google/gemma-4-31B-it）
+curl -L -o models/gemma-4-31B-it-Q4_K_M.gguf https://huggingface.co/unsloth/gemma-4-31B-it-GGUF/resolve/main/gemma-4-31B-it-Q4_K_M.gguf
 
 # Qwen3.5-27B（16.7GB, 日本語汎用）
-curl -L -o models/Qwen3.5-27B-Q4_K_M.gguf \
-  https://huggingface.co/unsloth/Qwen3.5-27B-GGUF/resolve/main/Qwen3.5-27B-Q4_K_M.gguf
+curl -L -o models/Qwen3.5-27B-Q4_K_M.gguf https://huggingface.co/unsloth/Qwen3.5-27B-GGUF/resolve/main/Qwen3.5-27B-Q4_K_M.gguf
 
 # Qwen3.5-9B（5.68GB, 軽量・高速）
-curl -L -o models/Qwen3.5-9B-Q4_K_M.gguf \
-  https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/Qwen3.5-9B-Q4_K_M.gguf
+curl -L -o models/Qwen3.5-9B-Q4_K_M.gguf https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/Qwen3.5-9B-Q4_K_M.gguf
 ```
 
 > 全モデルのダウンロードURLは各 `.env.example.*` ファイルの冒頭に記載されています。
@@ -212,6 +214,9 @@ ip addr show
 ```bash
 # Gemma 4 26B A4B IT の場合（MoE）
 cp .env.example.gemma4-26b .env
+
+# Gemma 4 31B IT の場合（Dense・公式カード: google/gemma-4-31B-it）
+cp .env.example.gemma4-31b .env
 
 # Qwen3.5-27B の場合
 cp .env.example.qwen3.5-27b .env
@@ -416,7 +421,7 @@ curl -s http://<WindowsのプライベートIPアドレス>:8081/health
 3. **LDIE をプロバイダとして登録**: [OpenClaw設定（Pattern A 例）](DOCS/ubuntu-ready/03_openclaw_config.md) に従い `openclaw.json` を編集する。
    - `models.providers` にプロバイダ（例: `ldie`）を追加し、`baseUrl` を `http://<WindowsのプライベートIP>:8081/v1` にする（末尾は必ず `/v1`）。
    - `apiKey` を Windows の `LDIE_Infra_Docker/.env` の `LLAMA_API_KEY` と**同じ値**にする（未設定の場合は双方とも未設定のまま）。
-   - `models[].id` は、Windows で `curl .../v1/models`（要 Bearer）の応答にある **`id` と完全一致**させる（例: Gemma 4 なら `gemma-4-26B-A4B-it-UD-Q4_K_M`）。
+   - `models[].id` は、Windows で `curl .../v1/models`（要 Bearer）の応答にある **`id` と完全一致**させる（例: Gemma 4 26B MoE なら `gemma-4-26B-A4B-it-UD-Q4_K_M`、31B Dense なら `gemma-4-31B-it-Q4_K_M`）。
    - `agents.defaults.model.primary` を `プロバイダ名/id` 形式にする（例: `ldie/gemma-4-26B-A4B-it-UD-Q4_K_M`）。
    - `contextWindow` は `.env` の `LLAMA_CTX_SIZE` と**同じ数値**にする。**OpenClaw 側で「最低 16000 トークン必要」などと言われる場合**は、両方を **16384** 以上（2 のべき乗が無難）に上げ、Windows で `docker-compose down` → `docker-compose up -d` し直す。コンテキストを広げると **VRAM 使用量が増える**。
 
@@ -443,6 +448,40 @@ curl -s http://<WindowsのプライベートIPアドレス>:8081/health
           {
             "id": "gemma-4-26B-A4B-it-UD-Q4_K_M",
             "name": "Gemma 4 26B A4B IT (Local)",
+            "reasoning": false,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "contextWindow": 16384,
+            "maxTokens": 4096
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+#### openclaw.json の例（Pattern A・Gemma 4 31B）
+
+```json
+{
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "ldie/gemma-4-31B-it-Q4_K_M"
+      }
+    }
+  },
+  "models": {
+    "providers": {
+      "ldie": {
+        "baseUrl": "http://<WindowsのプライベートIPアドレス>:8081/v1",
+        "apiKey": "sk-local-your-secret-key-here",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "gemma-4-31B-it-Q4_K_M",
+            "name": "Gemma 4 31B IT (Local)",
             "reasoning": false,
             "input": ["text"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
