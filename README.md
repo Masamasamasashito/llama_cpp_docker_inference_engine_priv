@@ -289,7 +289,7 @@ curl -X POST http://<WindowsのプライベートIPアドレス>:8081/v1/chat/co
 ### Authorization無し版（ワンライナー）
 
 ```bash
-curl -X POST http://<WindowsのプライベートIPアドレス>:8081/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "gemma-4-31B-it-Q4_K_M", "messages": [      {"role": "user", "content": "こんにちは、あなたは誰ですか？"}  ]  }'
+curl -X POST http://<WindowsのプライベートIPアドレス>:8081/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "gemma-4-31B-it-Q4_K_M", "messages": [ {"role": "user", "content": "こんにちは、あなたは誰ですか？"} ] }'
 ```
 
 ```bash
