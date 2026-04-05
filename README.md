@@ -418,7 +418,7 @@ curl -s http://<WindowsのプライベートIPアドレス>:8081/health
    - `apiKey` を Windows の `LDIE_Infra_Docker/.env` の `LLAMA_API_KEY` と**同じ値**にする（未設定の場合は双方とも未設定のまま）。
    - `models[].id` は、Windows で `curl .../v1/models`（要 Bearer）の応答にある **`id` と完全一致**させる（例: Gemma 4 なら `gemma-4-26B-A4B-it-UD-Q4_K_M`）。
    - `agents.defaults.model.primary` を `プロバイダ名/id` 形式にする（例: `ldie/gemma-4-26B-A4B-it-UD-Q4_K_M`）。
-   - `contextWindow` は `.env` の `LLAMA_CTX_SIZE` に合わせる。
+   - `contextWindow` は `.env` の `LLAMA_CTX_SIZE` と**同じ数値**にする。**OpenClaw 側で「最低 16000 トークン必要」などと言われる場合**は、両方を **16384** 以上（2 のべき乗が無難）に上げ、Windows で `docker-compose down` → `docker-compose up -d` し直す。コンテキストを広げると **VRAM 使用量が増える**。
 
 #### openclaw.json の例（Pattern A・Gemma 4 26B）
 
@@ -446,7 +446,7 @@ curl -s http://<WindowsのプライベートIPアドレス>:8081/health
             "reasoning": false,
             "input": ["text"],
             "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
-            "contextWindow": 8192,
+            "contextWindow": 16384,
             "maxTokens": 4096
           }
         ]
