@@ -303,8 +303,6 @@ python LDIE_TEST_Req/test_request_gemma3-27b.py
 docker-compose down
 ```
 
----
-
 ## 🔧 モード一覧(API提供側)
 
 | モード | docker-compose | デフォルトポート | 用途 |
@@ -315,8 +313,6 @@ docker-compose down
 | Agent | `docker-compose.agents.yml` | `8188` | AIエージェント（OpenClaw連携） |
 
 > 各種ポートは `.env` で変更可能です。
-
----
 
 ## 🔒 セキュリティ
 
@@ -330,7 +326,6 @@ docker-compose down
 > LDIE構成では脅威の大半はUbuntu（OpenClaw）側に集中します。Windows（LLMサーバー）側はDocker隔離+多層防御で比較的安全です。
 > 詳細は [モデルセキュリティ評価](DOCS/LDIE_ModelSecurityAssessment.md) および [ネットワーク設定](DOCS/openclaw-integration/02_network_config.md) を参照してください。
 
----
 
 ## ❓ よくあるトラブル
 
@@ -342,8 +337,6 @@ docker-compose down
 | ポートに接続できない | GPU版は `8081`、CPU版は `8082`、High版は `8083` がデフォルト。`docker ps` でポート確認 |
 | 401 Unauthorized | API Key不一致。`.env` の `LLAMA_API_KEY` とリクエストの `Authorization` ヘッダーを確認 |
 | LAN内の他PCから接続不可 | `DOCKER_HOST_BIND_ADDR` がプライベートIPになっているか、ファイアウォールが開いているか確認 |
-
----
 
 ## メリット・デメリット
 
@@ -361,7 +354,6 @@ docker-compose down
 - モデル管理は手動（GGUFファイルを自分でダウンロード）
 - 1コンテナ1モデル（モデル切り替えは再起動が必要）
 
----
 
 # OpenClaw起動とLDIEサーバー連携
 
