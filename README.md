@@ -116,7 +116,6 @@ LDIE/
 │   ├── docker-compose.yml               # GPU版（デフォルト）
 │   ├── docker-compose.cpu.yml           # CPU版
 │   ├── docker-compose.high.yml          # RTX 5090向け高性能版
-│   ├── docker-compose.agents.yml        # OpenClaw向けマルチエージェント設定
 │   ├── .env.example.gemma4-31b          # 現行のモデル別環境変数テンプレート
 │   └── .env                             # 実行中の環境変数
 ├── LDIE_TEST_Req/                       # テスト・ベンチマーク用スクリプト
