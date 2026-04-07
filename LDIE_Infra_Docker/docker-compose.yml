@@ -30,6 +30,7 @@ services:
       -m /models/${LLAMA_MODEL_FILE}
       --host 0.0.0.0
       --port ${LLAMA_CONTAINER_LISTEN_PORT:-8080}
+      --api-key ${LLAMA_API_KEY:-}
       --n-gpu-layers ${LLAMA_N_GPU_LAYERS:-99}
       --ctx-size ${LLAMA_CTX_SIZE:-32768}
       --temp ${LLAMA_TEMP:-1.0}
