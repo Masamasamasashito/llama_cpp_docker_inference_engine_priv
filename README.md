@@ -184,16 +184,17 @@ cp .env.example.gemma4-31b .env
 
 ## 6. （オプション）API Key の生成
 
-OpenClaw連携やLAN公開する場合は、API Key認証を有効化してください。
-
-```bash
-# macOS / Linux
-echo "LLAMA_API_KEY=sk-local-$(openssl rand -hex 32)" >> .env
-```
+- OpenClaw連携やLAN公開する場合は、API Key認証を有効化してください。
+- Windows 側の LDIE（llama.cpp サーバー）で使う .env の LLAMA_API_KEY を作ります。
 
 ```powershell
 # Windows PowerShell
 $bytes = New-Object byte[] 32; (New-Object System.Security.Cryptography.RNGCryptoServiceProvider).GetBytes($bytes); $hex = -join ($bytes | ForEach-Object { $_.ToString("x2") }); "LLAMA_API_KEY=sk-local-$hex" | Add-Content .env
+```
+
+```bash
+# macOS / Linux
+echo "LLAMA_API_KEY=sk-local-$(openssl rand -hex 32)" >> .env
 ```
 
 ## 7. Dockerホストバインドアドレス設定
@@ -244,6 +245,8 @@ curl http://<WindowsのプライベートIPアドレス>:8081/health
 curl -H "Authorization: Bearer YOUR_API_KEY" http://<WindowsのプライベートIPアドレス>:8081/v1/models
 ```
 
+`YOUR_API_KEY` には、`LDIE_Infra_Docker/.env` に設定した `LLAMA_API_KEY` の値（例: `sk-local-...`）を入れてください。
+
 ## 12. 使い方
 
 ### WebUI（ブラウザ）
@@ -286,11 +289,19 @@ curl -X POST http://<WindowsのプライベートIPアドレス>:8081/v1/chat/co
   }'
 ```
 
+### Authorization有り版（ワンライナー）
+
+```bash
+curl -X POST http://<WindowsのプライベートIPアドレス>:8081/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer YOUR_API_KEY" -d '{"model": "gemma-4-31B-it-Q4_K_M", "messages": [ {"role": "user", "content": "こんにちは、あなたは誰ですか？"} ] }'
+```
+
 ### Authorization無し版（ワンライナー）
 
 ```bash
 curl -X POST http://<WindowsのプライベートIPアドレス>:8081/v1/chat/completions -H "Content-Type: application/json" -d '{"model": "gemma-4-31B-it-Q4_K_M", "messages": [ {"role": "user", "content": "こんにちは、あなたは誰ですか？"} ] }'
 ```
+
+### Pythonテストリクエスト
 
 ```bash
 # Pythonテストリクエスト
