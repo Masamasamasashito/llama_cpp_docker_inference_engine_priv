@@ -383,40 +383,80 @@ curl -s http://<WindowsのプライベートIPアドレス>:8081/health
    - `apiKey` を Windows の `LDIE_Infra_Docker/.env` の `LLAMA_API_KEY` と**同じ値**にする（未設定の場合は双方とも未設定のまま）。
    - `models[].id` は、Windows で `curl .../v1/models`（要 Bearer）の応答にある **`id` と完全一致**させる（例: Gemma 4 31B Dense なら `gemma-4-31B-it-Q4_K_M`）。
    - `agents.defaults.model.primary` を `プロバイダ名/id` 形式にする（例: `ldie/gemma-4-31B-it-Q4_K_M`）。
-   - `contextWindow` は `.env` の `LLAMA_CTX_SIZE` と**同じ数値**にする。**OpenClawは最低 16000 トークンが必要。最低 **16384** 以上とし、**Gemma 4 31B では 16384 で不足することがあるため **32768** にする。
+   - `contextWindow` は `.env` の `LLAMA_CTX_SIZE` と**同じ数値**にする。OpenClawは最低 16000 トークンが必要なため **16384 以上**にする。Gemma 4 31B では 16384 で不足することがあるため、**32768** を推奨。
 
 ### openclaw.json の例（Pattern A・Gemma 4 31B）
 
+`~/.openclaw/openclaw.json` を以下の様に編集します。
+
 ```json
 {
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "gateway": {
+    "auth": {
+      "mode": "token",
+      "token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    },
+    "mode": "local"
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.4.2",
+    "lastTouchedAt": "yyyy-mm-ddT07:59:29.079Z"
+  },
   "agents": {
     "defaults": {
       "model": {
         "primary": "ldie/gemma-4-31B-it-Q4_K_M"
+      },
+      "workspace": "/home/ocn/.openclaw/workspace",
+      "models": {
+        "ldie/gemma-4-31B-it-Q4_K_M": {
+          "alias": "gemma4-31b"
+        }
       }
     }
   },
   "models": {
     "providers": {
       "ldie": {
-        "baseUrl": "http://<WindowsのプライベートIPアドレス>:8081/v1",
-        "apiKey": "sk-local-your-secret-key-here",
+        "baseUrl": "http://192.168.xxx.xxx:8081/v1",
         "api": "openai-completions",
+        "apiKey": "sk-local-your-secret-key-here",
         "models": [
           {
             "id": "gemma-4-31B-it-Q4_K_M",
             "name": "Gemma 4 31B IT (Local)",
             "reasoning": false,
-            "input": ["text"],
-            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
             "contextWindow": 32768,
             "maxTokens": 4096
           }
         ]
       }
-    }
+    },
+    "mode": "merge"
+  },
+  "wizard": {
+    "lastRunAt": "yyyy-mm-ddT07:59:29.070Z",
+    "lastRunVersion": "2026.4.2",
+    "lastRunCommand": "configure",
+    "lastRunMode": "local"
   }
 }
+
 ```
 
 - **確認**: `openclaw models list --provider ldie` でモデルが列挙されることを確認する。
@@ -427,3 +467,8 @@ curl -s http://<WindowsのプライベートIPアドレス>:8081/health
 
 LAN 公開・API Key・ファイアウォールは [OpenClaw連携 セットアップ手順](DOCS/openclaw-integration/01_setup_guide.md) の Step 1〜3 に従う。ネットワークの細部は [ネットワーク設定](DOCS/openclaw-integration/02_network_config.md)、全体像は [LDIE アーキテクチャ](DOCS/LDIE_Architecture.md) を参照。
 
+# OpenClaw Update
+
+```bash
+npm update -g @anthropic-ai/openclaw
+```
