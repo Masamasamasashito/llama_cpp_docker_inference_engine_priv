@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🦙 LDIE — Llama.cpp Docker Inference Engine
+# 🦙 LDIE — Llama.cpp Docker Inference Engine with OpenClaw
 
 <!-- ヘッダー画像例（必要に応じてURLを差し替えてください） -->
 
@@ -391,33 +391,10 @@ curl -s http://<WindowsのプライベートIPアドレス>:8081/health
 
 ```json
 {
-  "commands": {
-    "native": "auto",
-    "nativeSkills": "auto",
-    "restart": true,
-    "ownerDisplay": "raw"
-  },
-  "gateway": {
-    "auth": {
-      "mode": "token",
-      "token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    },
-    "mode": "local"
-  },
-  "meta": {
-    "lastTouchedVersion": "2026.4.2",
-    "lastTouchedAt": "yyyy-mm-ddT07:59:29.079Z"
-  },
   "agents": {
     "defaults": {
       "model": {
         "primary": "ldie/gemma-4-31B-it-Q4_K_M"
-      },
-      "workspace": "/home/ocn/.openclaw/workspace",
-      "models": {
-        "ldie/gemma-4-31B-it-Q4_K_M": {
-          "alias": "gemma4-31b"
-        }
       }
     }
   },
@@ -432,28 +409,14 @@ curl -s http://<WindowsのプライベートIPアドレス>:8081/health
             "id": "gemma-4-31B-it-Q4_K_M",
             "name": "Gemma 4 31B IT (Local)",
             "reasoning": false,
-            "input": [
-              "text"
-            ],
-            "cost": {
-              "input": 0,
-              "output": 0,
-              "cacheRead": 0,
-              "cacheWrite": 0
-            },
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
             "contextWindow": 32768,
             "maxTokens": 4096
           }
         ]
       }
-    },
-    "mode": "merge"
-  },
-  "wizard": {
-    "lastRunAt": "yyyy-mm-ddT07:59:29.070Z",
-    "lastRunVersion": "2026.4.2",
-    "lastRunCommand": "configure",
-    "lastRunMode": "local"
+    }
   }
 }
 
