@@ -116,21 +116,22 @@ LDIE/
 │   ├── docker-compose.yml               # GPU版（デフォルト）
 │   ├── docker-compose.cpu.yml           # CPU版
 │   ├── docker-compose.high.yml          # RTX 5090向け高性能版
-│   ├── docker-compose.comfyui.yml       # 動画生成（ComfyUI）
-│   ├── .env.example.*                   # モデル別環境変数テンプレート（13種）
-│   ├── models/                          # モデル(GGUF)ファイル配置用
-│   └── logs/                            # サーバーログ保存用
-├── LDIE_TEST_Req/                             # テストリクエストスクリプト
-│   └── test_request_gemma4-31b.py
+│   ├── docker-compose.agents.yml        # OpenClaw向けマルチエージェント設定
+│   ├── .env.example.gemma4-31b          # 現行のモデル別環境変数テンプレート
+│   └── .env                             # 実行中の環境変数
+├── LDIE_TEST_Req/                       # テスト・ベンチマーク用スクリプト
+│   ├── test_request_gemma4-31b.py
+│   ├── measure_inference_speed.sh
+│   └── benchmark_with_log.sh
 ├── DOCS/
 │   ├── README.md                        # ドキュメントハブ
 │   ├── LDIE_Architecture.md             # アーキテクチャ（2パターン）
 │   ├── LDIE_NamingConvention.md         # 命名規則リファレンス
 │   ├── LDIE_ModelSecurityAssessment.md  # モデルセキュリティ評価
 │   ├── text-llm/                        # テキスト生成LLMドキュメント
-│   ├── video-generation/                # 動画生成ドキュメント
 │   ├── openclaw-integration/            # OpenClaw連携ガイド
 │   └── ubuntu-ready/                    # Ubuntu側完全手順
+├── Archives/                            # 旧モデル/旧構成の退避
 └── README.md                            # このファイル/Quick Start
 ```
 
