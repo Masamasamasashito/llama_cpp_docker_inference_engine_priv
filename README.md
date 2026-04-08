@@ -446,19 +446,30 @@ Ubuntu24.04.4 LTSのOpenClaw を Discord から利用するための、最小構
    - 分かりやすいアプリ名（例: `openclaw-gateway-bot`）を設定。
 
 2. **Bot ユーザーを有効化**
+   - 目的: Discordアプリに「実際に発言・受信する実体（Botユーザー）」を作る。
    - 左メニュー `Bot` で `Add Bot` を実行。
    - `Public Bot` は用途に応じて ON/OFF（個人運用なら OFF 推奨）。
 
 3. **Bot トークンを発行して控える**
+   - 目的: OpenClaw 側から Discord Bot としてログインするための認証情報を取得する。
    - `Bot` ページの `Reset Token`（または `Copy`）でトークンを取得。
    - この値は再表示されないため、安全な場所に保管。
 
+### 補足（用語整理）
+
+- **OS内のDiscordアプリ（Windows/macOS/iOS等）**: ユーザーが操作するクライアントUI。端末上で動作し、Discordクラウドへ接続する（Bot設定やOAuth設定は保持しない）。
+- **Discord Bot**: そのアプリに紐づく自動応答ユーザー。実際にチャンネルで動く主体。
+- **Discordサーバー**: Bot を招待して使う場所（ギルド）。OAuth2 の招待URLで追加する。
+- Discordサーバー（ギルド）自体は Discord 社のクラウド上で動作し、Ubuntu 側は `openclaw gateway` プロセスとして Discord API に接続するクライアント側です。
+
 4. **必要な Privileged Gateway Intents を設定**
+   - 目的: Bot が Discord の必要なイベント（特にメッセージ本文）を受信できるようにする。
    - `Bot` ページで以下を必要に応じて有効化。
    - `MESSAGE CONTENT INTENT`（メッセージ本文を読む場合）
    - `SERVER MEMBERS INTENT` / `PRESENCE INTENT`（必要な機能がある場合のみ）
 
 5. **OAuth2 で招待URLを作成**
+   - 目的: Bot を対象サーバーへ必要最小権限で参加させる。
    - `OAuth2 > URL Generator` を開く。
    - `Scopes`: `bot`（必要なら `applications.commands` も追加）
    - `Bot Permissions`: 最低限 `View Channels`, `Send Messages`, `Read Message History` を付与。
