@@ -464,6 +464,7 @@ Ubuntu24.04.4 LTSのOpenClaw を Discord から利用するための、最小構
 
 4. **必要な Privileged Gateway Intents を設定**
    - 目的: Bot が Discord の必要なイベント（特にメッセージ本文）を受信できるようにする。
+   - 設定場所: Discord Developer Portal > 対象アプリ > `Bot` > `Privileged Gateway Intents`
    - `Bot` ページで以下を必要に応じて有効化。
    - `MESSAGE CONTENT INTENT`（メッセージ本文を読む場合）
    - `SERVER MEMBERS INTENT` / `PRESENCE INTENT`（必要な機能がある場合のみ）
