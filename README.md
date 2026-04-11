@@ -440,62 +440,140 @@ npm update -g @anthropic-ai/openclaw
 
 ## OpenClaw + Discord 連携手順
 
-Ubuntu24.04.4 LTSのOpenClaw を Discord から利用するための、最小構成の手順です。
-（Botトークンは秘密情報です。`README.md` やリポジトリにコミットしないでください）
+Ubuntu 24.04.4 LTS の OpenClaw を Discord から使うための手順です。(Discord) Bot トークンは秘密情報なので、`README.md` やリポジトリに書かないでください。
 
-1. **Discord Developer Portal でアプリ作成**
-   - [Discord Developer Portal](https://discord.com/developers/applications) にログインし、`New Application` を作成。
-   - 分かりやすいアプリ名（例: `OpenclawGatewayDiscordApp`）を設定。
+### 大まかな流れ
 
-2. **Bot ユーザーを有効化**
-   - 目的: Discord 上でメッセージ送受信するため **Discord Bot アカウント** を有効化。Discord Developer Portal で作る **通常の Bot**（OpenClaw Bot ではない）。Ubuntu 上の **OpenClaw gateway** は、この Bot のトークンで Discord API にログインし、OpenClaw エージェントをチャンネルへ接続する。
-   - メッセージ受信は、招待した Discord サーバー内のテキストチャンネル等に **人間ユーザーや他Botが投稿した内容** を、Discord クラウド経由で **Ubuntu 上で `openclaw gateway` を実行して起動している OpenClaw のゲートウェイプロセス**（Discord API に Bot トークンで接続し、OpenClaw エージェントと Discord チャンネルの間を中継する常駐処理）が取り込むこと。**送信**は、同じ **OpenClaw のゲートウェイプロセス**が、OpenClaw エージェントの応答を **この Bot ユーザーとして同じチャンネルに投稿**すること（PC内のローカルプロセス同士の直接通信ではない）。
-   - 左メニュー `Bot` で `Add Bot` を実行。
-   - **Bot ユーザー名**（`Bot` ページのユーザー名フィールド）を **`OpenclawGatewayBot`** に設定する。既に他者に取得されている場合は別名にし、以降の手順ではその Bot を指す。
-   - `Public Bot` は用途に応じて ON/OFF（個人運用なら OFF 推奨）。
+1. [Discord Developer Portal](https://discord.com/developers/applications) でアプリと **Bot** を作成し、**(Discord) Bot トークン** を取得する。
+2. **Privileged Gateway Intents** を設定する（特に **Message Content Intent** はメッセージ本文取得に必要）。
+3. (Discord) Bot を自分の **(Discord) サーバー**（ギルド）に招待し、**サーバーID** と **ユーザーID** を控える（後述「(Discord) Bot を (Discord) サーバーに招待し、サーバーIDとユーザーIDを控える」）。
+4. `~/.openclaw/openclaw.json` の **`channels` → `discord`** に、(Discord) Bot トークン・サーバー・ユーザー（許可リスト）を書き込む。
+5. **DM** または **CLI** で OpenClaw の **ペアリング** を承認する。
+6. `openclaw gateway` を起動し、Discord 側で応答を確認する。
 
-3. **Bot トークンを発行して控える**
-   - 目的: OpenClaw 側から Discord Bot としてログインするための認証情報を取得する。
-   - `Bot` ページの `Reset Token`（または `Copy`）でトークンを取得。
-   - この値は再表示されないため、安全な場所に保管。
+### Discord Developer Portal: アプリ・(Discord) Bot・トークン
 
-### 補足（用語整理）
+1. [Discord Developer Portal](https://discord.com/developers/applications) にログインし、`New Application` でアプリを作成する。分かりやすい名前（例: `OpenclawGatewayApp`）を付ける。
+2. 左メニュー **Bot** → `Add Bot` で Bot を有効化する。ユーザー名は例として **`OpenclawGatewayBot`**（既に使用済みなら別名でよい）。
+3. 同じ **Bot** ページで **Reset Token** / **Copy** により **(Discord) Bot トークン** を取得し、安全な場所に保管する（再表示されない）。
+4. **Public Bot** は用途に応じて ON/OFF（個人運用なら OFF 推奨）。
 
-- **OS内のDiscordアプリ（Windows/macOS/iOS等）**: ユーザーが操作するクライアントUI。端末上で動作し、Discordクラウドへ接続する（Bot設定やOAuth設定は保持しない）。
-- **Discord Bot**: そのアプリに紐づく自動応答ユーザー。実際にチャンネルで動く主体。
-- **Discordサーバー**: Bot を招待して使う場所（ギルド）。OAuth2 の招待URLで追加する。
-- Discordサーバー（ギルド）自体は Discord 社のクラウド上で動作し、Ubuntu 側は `openclaw gateway` プロセスとして Discord API に接続するクライアント側です。
+OpenClaw は Ubuntu 上で `openclaw gateway` を動かし、この **(Discord) Bot トークン** で Discord API に接続してメッセージを中継します。Bot 本体は Discord 公式の仕組みで作る **通常の Bot** であり、OpenClaw が別途配布する「専用 Bot」ではありません。
 
-4. **必要な Privileged Gateway Intents を設定**
-   - 目的: Bot が Discord の必要なイベント（特にメッセージ本文）を受信できるようにする。
-   - 設定場所: Discord Developer Portal > 対象アプリ > 概要 > `Bot` > `Privileged Gateway Intents`
-   - `Bot` ページで以下を必要に応じて有効化。
-   - `MESSAGE CONTENT INTENT`（メッセージ本文を読む場合）
-   - `SERVER MEMBERS INTENT` / `PRESENCE INTENT`（必要な機能がある場合のみ）
+### Privileged Gateway Intents
 
-5. **OAuth2 で招待URLを作成**
-   - 目的: Bot を対象サーバーへ必要最小権限で参加させる。
-   - 設定場所: Discord Developer Portal > 対象アプリ > 概要 > `OAuth2` > `URL Generator`
-   - `OAuth2 > URL Generator` を開く。
-   - `Scopes`: `bot`（必要なら `applications.commands` も追加）
-   - `Bot Permissions`: 最低限 `View Channels`, `Send Messages`, `Read Message History` を付与。
-   - 生成URLをブラウザで開き、対象サーバーに Bot を追加。
+- **設定場所**: 対象アプリ → 左メニュー **Bot** → **Privileged Gateway Intents**
+- **Message Content Intent** をオンにする（チャンネルのメッセージ本文を読む場合に必須）。
+- **Server Members Intent** / **Presence Intent** は、必要な機能があるときだけオンにする。
 
-6. **Ubuntu24.04.4 LTS 側の実行環境にトークンを設定**
-   - OpenClaw / 連携スクリプトが読む `.env`（例: `~/.openclaw/.env`）にトークンを設定。
-   - 変数名は実装に合わせる（例: `DISCORD_BOT_TOKEN=...`）。
-   - `.env` は `.gitignore` 対象にして、誤って push しない。
+### (Discord) Bot を (Discord) サーバーに招待し、(Discord) サーバーIDと自身の(Discord) ユーザーIDを控える
 
-7. **Ubuntu24.04.4 LTS 側で OpenClaw gateway を起動**
-   - 1回目セットアップ後は通常 `openclaw gateway` で起動。
-   - 常駐運用する場合は `tmux` / `systemd` などでプロセス管理。
+#### 招待リンクを作る（OAuth2 / URL Generator）
 
-8. **Discord 連携の動作確認**
-   - Discord 側で Bot がオンライン表示になることを確認。
-   - テストチャンネルでメンション or 想定コマンドを送信し、応答を確認。
-   - 応答しない場合は、トークン・Intent・チャンネル権限・gateway ログを順に確認。
+1. Developer Portal で対象アプリを開き、左メニュー **OAuth2** → **URL Generator** を開く。
+2. **SCOPES** で次にチェックする: `bot`、（推奨）`applications.commands`
+3. 表示された **BOT PERMISSIONS** で、少なくとも次をオンにする:
+   - View Channels（チャンネルを見る）
+   - Send Messages（メッセージを送信する）
+   - Read Message History（メッセージ履歴を読む）
+   - Embed Links（リンクを埋め込む）
+   - Attach Files（ファイルを添付する）
+   - Add Reactions（リアクションを追加する）※任意
+4. ページ最下部の **生成 URL をコピー**し、**別タブ**で開いてサーバーを選び、認証して Bot を追加する。
 
-9. **セキュリティ運用**
-   - トークン漏えい時は即 `Reset Token` し、`.env` を更新して再起動。
-   - Bot 権限は最小権限に保つ（管理者権限は原則不要）。
-   - 公開サーバーでは利用チャンネルを限定し、監査しやすくする。
+**注意**: URL Generator に **保存ボタンはない**ため、左メニューを切り替えるとスコープや権限の選択が消えることがある。**生成 URL をコピーしてから**別画面へ移るか、このページを離れずに招待まで完了させる。
+
+#### 開発者モードをオンにする（Discord クライアント）
+
+ID をコピーするには **開発者モード**が必要です。
+
+1. Discord アプリ左下の **ユーザー設定**（歯車）を開く。
+2. 左メニュー **詳細設定**（Advanced）を開く。
+3. **開発者モード**（Developer Mode）を **オン** にする。
+
+#### サーバーID・ユーザーIDをコピーする
+
+- **サーバーID**: 左のサーバー一覧で **サーバーアイコンを右クリック** → **サーバーIDをコピー**
+- **ユーザーID**: **自分の名前またはアバターを右クリック** → **ユーザーIDをコピー**
+
+#### メモしておくもの（チェックリスト）
+
+- [ ] **(Discord) Bot トークン**（上記の手順で取得したもの）
+- [ ] **サーバーID**（数字の文字列）
+- [ ] **ユーザーID**（許可する自分のユーザーID）
+
+### `openclaw.json` に Discord を書き込む
+
+編集するファイル: `~/.openclaw/openclaw.json`（`openclaw onboard` 後に存在する想定）。
+
+`channels` → `discord` に、概ね次のような意味で値を入れる（**キー名や入れ子は OpenClaw のバージョンで異なる場合がある**ので、手元の雛形・エラーメッセージ・公式ドキュメントを優先する）。
+
+| 項目 | 例の意味 |
+|------|----------|
+| `token` | (Discord) Bot トークン（OpenClaw がその Bot として Discord にログインする） |
+| `enabled` | `true` で Discord 連携を有効化 |
+| `groupPolicy` | `"allowlist"` で「許可したユーザーだけ」に制限 |
+| `guilds` | 利用する **サーバーID** を登録 |
+| `requireMention` | `false` なら @Bot なしでも反応させられる（運用に合わせて変更） |
+| `users` | 許可する **ユーザーID** のリスト |
+
+イメージ（**実際の JSON 構造は環境に合わせて編集**）:
+
+```jsonc
+{
+  "channels": {
+    "discord": {
+      "enabled": true,
+      "token": "PASTE_BOT_TOKEN",
+      "groupPolicy": "allowlist",
+      "guilds": {
+        "YOUR_GUILD_ID": {
+          "requireMention": false,
+          "users": ["YOUR_USER_ID"]
+        }
+      }
+    }
+  }
+}
+```
+
+意図としては、「この (Discord) Bot トークンで、このサーバーにいる、このユーザーからのメッセージにだけ反応する」という設定を `openclaw.json` に保存する、ということです。変更後は `openclaw gateway` を再起動して反映します。
+
+### ペアリングの承認
+
+OpenClaw の指示に従い、**DM** または **CLI** でペアリング（信頼できるクライアントの登録）を承認します。ここまで済むと、Discord 経由でエージェントを操作できる状態になります。
+
+### 起動と動作確認
+
+- 通常は `openclaw gateway` でゲートウェイを起動する。常駐させる場合は `tmux` / `systemd` などで管理する。
+- Discord で Bot がオンラインになること、テストチャンネルで応答があることを確認する。
+- 応答しない場合は、(Discord) Bot トークン、Intent、チャンネル権限、`openclaw.json` の ID、ゲートウェイのログを順に確認する。
+
+### セキュリティ運用
+
+- **(Discord) Bot トークン**の漏えい時はすぐ **Reset Token** し、`openclaw.json` を更新してゲートウェイを再起動する。
+- Bot 権限は必要最小限にし、公開サーバーでは利用チャンネルを限定する。
+
+### 補足（用語）
+
+- **OS 内の Discord アプリ**: 人間が使うクライアント。(Discord) Bot トークンや Portal の設定はここには保存されない。
+- **Discord サーバー（ギルド）**: Bot を招待して運用する場所。メッセージの送受信は Discord クラウド経由で行われる。
+
+### Discord での最初の会話（メンション名・確認プロンプト例）
+
+本 README の例どおり、Developer Portal で Bot のユーザー名を **`OpenclawGatewayBot`** にしている場合、チャンネルでメンションする表記は **`@OpenclawGatewayBot`** になる（別名にした場合はその名前の**@**表記に読み替える）。入力欄で `@` を打つと候補が出るので、そこで正しい表記を確認してもよい。
+
+`openclaw.json` で `requireMention` を `false` にしている場合は **メンションなし**でも反応する設定になり得るが、初回の切り分けでは **`@OpenclawGatewayBot` を付けて送る**と、Bot 宛てであることがはっきりする。
+
+**確認用プロンプトの例（コピーして使い、必要に応じて Bot 名を置き換え）:**
+
+```
+@OpenclawGatewayBot 接続テストです。短く返信してください。
+```
+
+```
+@OpenclawGatewayBot 動作確認です。あなたは OpenClaw 経由で応答していますか？ はい／いいえ、と一文で答えてください。
+```
+
+
+
