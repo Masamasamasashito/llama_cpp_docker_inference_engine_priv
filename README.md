@@ -445,11 +445,13 @@ Ubuntu24.04.4 LTSのOpenClaw を Discord から利用するための、最小構
 
 1. **Discord Developer Portal でアプリ作成**
    - [Discord Developer Portal](https://discord.com/developers/applications) にログインし、`New Application` を作成。
-   - 分かりやすいアプリ名（例: `openclaw-gateway-discord-app`）を設定。
+   - 分かりやすいアプリ名（例: `OpenclawGatewayDiscordApp`）を設定。
 
 2. **Bot ユーザーを有効化**
-   - 目的: Discordアプリに「実際に発言・受信する実体（Botユーザー）」を作る。
+   - 目的: Discord 上でメッセージ送受信するため **Discord Bot アカウント** を有効化。Discord Developer Portal で作る **通常の Bot**（OpenClaw Bot ではない）。Ubuntu 上の **OpenClaw gateway** は、この Bot のトークンで Discord API にログインし、OpenClaw エージェントをチャンネルへ接続する。
+   - メッセージ受信は、招待した Discord サーバー内のテキストチャンネル等に **人間ユーザーや他Botが投稿した内容** を、Discord クラウド経由で **Ubuntu 上で `openclaw gateway` を実行して起動している OpenClaw のゲートウェイプロセス**（Discord API に Bot トークンで接続し、OpenClaw エージェントと Discord チャンネルの間を中継する常駐処理）が取り込むこと。**送信**は、同じ **OpenClaw のゲートウェイプロセス**が、OpenClaw エージェントの応答を **この Bot ユーザーとして同じチャンネルに投稿**すること（PC内のローカルプロセス同士の直接通信ではない）。
    - 左メニュー `Bot` で `Add Bot` を実行。
+   - **Bot ユーザー名**（`Bot` ページのユーザー名フィールド）を **`OpenclawGatewayBot`** に設定する。既に他者に取得されている場合は別名にし、以降の手順ではその Bot を指す。
    - `Public Bot` は用途に応じて ON/OFF（個人運用なら OFF 推奨）。
 
 3. **Bot トークンを発行して控える**
