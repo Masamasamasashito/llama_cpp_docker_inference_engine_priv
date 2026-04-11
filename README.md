@@ -445,7 +445,7 @@ Ubuntu24.04.4 LTSのOpenClaw を Discord から利用するための、最小構
 
 1. **Discord Developer Portal でアプリ作成**
    - [Discord Developer Portal](https://discord.com/developers/applications) にログインし、`New Application` を作成。
-   - 分かりやすいアプリ名（例: `openclaw-gateway-bot`）を設定。
+   - 分かりやすいアプリ名（例: `openclaw-gateway-discord-app`）を設定。
 
 2. **Bot ユーザーを有効化**
    - 目的: Discordアプリに「実際に発言・受信する実体（Botユーザー）」を作る。
