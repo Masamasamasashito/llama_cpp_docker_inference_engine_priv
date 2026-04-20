@@ -469,8 +469,8 @@ OpenClaw は Ubuntu 上で `openclaw gateway` を動かし、この **(Discord) 
 ### Privileged Gateway Intents
 
 - **設定場所**: 対象アプリ → 左メニュー **Bot** → **Privileged Gateway Intents**
+- **Presence Intent** / **Server Members Intent** は、必要な機能があるときだけオンにする。
 - **Message Content Intent** をオンにする（チャンネルのメッセージ本文を読む場合に必須）。
-- **Server Members Intent** / **Presence Intent** は、必要な機能があるときだけオンにする。
 
 ### (Discord) Bot を (Discord) サーバーに招待し、(Discord) サーバーIDと自身の(Discord) ユーザーIDを控える
 
