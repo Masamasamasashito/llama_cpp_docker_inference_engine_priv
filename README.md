@@ -212,7 +212,12 @@ ipconfig
 
 ## 8. Dockerホストバインドアドレス設定
 
+API提供側のWindows PC（Docker/llama.cpp を起動する側）の `LDIE_Infra_Docker/.env` で記載を更新します。
+
+```bash
 DOCKER_HOST_BIND_ADDR=<Windows PC(API提供側)のプライベートIPアドレス>
+```
+
 （補足）127.0.0.1 はローカル専用、192.168.x.x はLAN公開用
 
 ## 9. 起動(API提供側)Windows
