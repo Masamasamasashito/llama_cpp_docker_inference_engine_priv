@@ -170,6 +170,8 @@ ip addr show
     inet 192.168.1.200/24 brd 192.168.1.255    ← 自分のプライベートIP
 ```
 
+> 注意: Ubuntu のプライベートIPが再起動等で変わる場合、後続の「Windows Defender ファイアウォールで許可したリモートIP（Ubuntu側IP）」の再設定が必要です。
+
 ## 5. 環境変数の設定(API提供側)
 
 使いたいモデルの `.env.example.*` をコピーして `.env` を作成します。
@@ -240,6 +242,8 @@ docker-compose -f docker-compose.high.yml up -d
 1. コントロールパネル > システムとセキュリティ > Windows Defender ファイアウォール > (左ペイン)詳細設定 > ローカルコンピューターのセキュリティが強化されたWindows Defender ファイアウォール > 受信の規則 > 新しい規則
 2. 受信の規則 > ポート > 次へ > TCP,特定のローカルポート,8081 > 次へ > 接続を許可する > 次へ > プロファイル > プライベート > 次へ > 名前: LLAMA_API_Port_and_Private_IP > 完了
 3. 受信の規則 > LLAMA_API_Port_and_Private_IPを探し、右クリック > プロパティ > スコープ > リモートIPアドレス > これらのIPアドレス > 追加 > このIPアドレスまたはサブネット > Ubuntu PCのプライベートIPを入力 > OK > 適用 > OK
+
+> 注意: Ubuntu のプライベートIPが変わった場合は、この規則の「リモートIPアドレス」を新しいIPに更新してください（旧IPのままだと OpenClaw から接続できません）。
 
 ## 12. 動作確認(API提供側)
 
@@ -339,7 +343,7 @@ docker-compose down
 |---|---|
 | バインドアドレス | デフォルト `127.0.0.1`（ローカルのみ）。LAN公開時はプライベートIPを明示指定 |
 | API Key認証 | `--api-key` によるBearer Token認証 |
-| ファイアウォール | Ubuntu PCのプライベートIPのみ許可（OpenClaw連携時） |
+| ファイアウォール | Ubuntu PCのプライベートIPのみ許可（OpenClaw連携時）。UbuntuのIPが変わったら受信規則のリモートIPを更新 |
 | モデルリスク管理 | [セキュリティ評価](DOCS/LDIE_ModelSecurityAssessment.md) に基づくモデル選定 |
 
 > LDIE構成では脅威の大半はUbuntu（OpenClaw）側に集中します。Windows（LLMサーバー）側はDocker隔離+多層防御で比較的安全です。
@@ -355,7 +359,7 @@ docker-compose down
 | 応答が遅い | CPU実行になっている可能性。`LLAMA_N_GPU_LAYERS=99` を設定して全レイヤーGPUに |
 | ポートに接続できない | GPU版は `8081`、CPU版は `8082`、High版は `8083` がデフォルト。`docker ps` でポート確認 |
 | 401 Unauthorized | API Key不一致。`.env` の `LLAMA_API_KEY` とリクエストの `Authorization` ヘッダーを確認 |
-| LAN内の他PCから接続不可 | `DOCKER_HOST_BIND_ADDR` がプライベートIPになっているか、ファイアウォールが開いているか確認 |
+| LAN内の他PCから接続不可 | `DOCKER_HOST_BIND_ADDR` がプライベートIPになっているか、ファイアウォールが開いているか確認。Ubuntu再起動後は受信規則の許可IP（RemoteAddress）が最新か確認 |
 
 ## メリット・デメリット
 
@@ -477,14 +481,16 @@ OpenClaw は Ubuntu 上で `openclaw gateway` を動かし、この **(Discord) 
 #### 招待リンクを作る（OAuth2 / URL Generator）
 
 1. Developer Portal で対象アプリを開き、左メニュー **OAuth2** → **URL Generator** を開く。
-2. **SCOPES** で次にチェックする: `bot`、（推奨）`applications.commands`
-3. 表示された **BOT PERMISSIONS** で、少なくとも次をオンにする:
-   - View Channels（チャンネルを見る）
-   - Send Messages（メッセージを送信する）
-   - Read Message History（メッセージ履歴を読む）
-   - Embed Links（リンクを埋め込む）
-   - Attach Files（ファイルを添付する）
-   - Add Reactions（リアクションを追加する）※任意
+2. **SCOPES** で次にチェックする: 
+   - `bot`、（推奨）
+   - `applications.commands`
+3. **BOT PERMISSIONS** 次をオンにする:
+   - `View Channels`（チャンネルを見る）
+   - `Send Messages`（メッセージを送信する）
+   - `Read Message History`（メッセージ履歴を読む）
+   - `Embed Links`（リンクを埋め込む）
+   - `Attach Files`（ファイルを添付する）
+   - `Add Reactions`（リアクションを追加する）※任意
 4. ページ最下部の **生成 URL をコピー**し、**別タブ**で開いてサーバーを選び、認証して Bot を追加する。
 
 **注意**: URL Generator に **保存ボタンはない**ため、左メニューを切り替えるとスコープや権限の選択が消えることがある。**生成 URL をコピーしてから**別画面へ移るか、このページを離れずに招待まで完了させる。
