@@ -486,13 +486,16 @@ OpenClaw は Ubuntu 上で `openclaw gateway` を動かし、この **(Discord) 
    - `bot`、（推奨）
    - `applications.commands`
 3. **BOT PERMISSIONS** 次をオンにする:
-   - `View Channels`（チャンネルを見る）
-   - `Send Messages`（メッセージを送信する）
-   - `Read Message History`（メッセージ履歴を読む）
-   - `Embed Links`（リンクを埋め込む）
-   - `Attach Files`（ファイルを添付する）
-   - `Add Reactions`（リアクションを追加する）※任意
-4. ページ最下部の **生成 URL をコピー**し、**別タブ**で開いてサーバーを選び、認証して Bot を追加する。
+   - General Permissions
+    - `View Channels`（チャンネルを見る）
+   - Text Permissions
+    - `Send Messages`（メッセージを送信する）
+    - `Embed Links`（リンクを埋め込む）
+    - `Attach Files`（ファイルを添付する）
+    - `Read Message History`（メッセージ履歴を読む）
+    - `Mention Everyone`（全員にメンションする）
+    - `Add Reactions`（リアクションを追加する）※任意
+4. ページ最下部の **生成 URL をコピー**し、**ブラウザの別タブ**で開いて、`Add to server` でサーバーを選び、`Continue` を押して、Authorizeする。Go to Serverを押すと、Botがサーバーに追加されます。
 
 **注意**: URL Generator に **保存ボタンはない**ため、左メニューを切り替えるとスコープや権限の選択が消えることがある。**生成 URL をコピーしてから**別画面へ移るか、このページを離れずに招待まで完了させる。
 
@@ -501,7 +504,7 @@ OpenClaw は Ubuntu 上で `openclaw gateway` を動かし、この **(Discord) 
 ID をコピーするには **開発者モード**が必要です。
 
 1. Discord アプリ左下の **ユーザー設定**（歯車）を開く。
-2. 左メニュー **詳細設定**（Advanced）を開く。
+2. 左メニュー **Developer** を開く。
 3. **開発者モード**（Developer Mode）を **オン** にする。
 
 #### サーバーID・ユーザーIDをコピーする
