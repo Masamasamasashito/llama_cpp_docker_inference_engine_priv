@@ -360,6 +360,7 @@ docker-compose down
 | ポートに接続できない | GPU版は `8081`、CPU版は `8082`、High版は `8083` がデフォルト。`docker ps` でポート確認 |
 | 401 Unauthorized | API Key不一致。`.env` の `LLAMA_API_KEY` とリクエストの `Authorization` ヘッダーを確認 |
 | LAN内の他PCから接続不可 | `DOCKER_HOST_BIND_ADDR` がプライベートIPになっているか、ファイアウォールが開いているか確認。Ubuntu再起動後は受信規則の許可IP（RemoteAddress）が最新か確認 |
+| OpenClawのGUIチャットは動くがDiscordだけ無反応 | `openclaw gateway` 再起動漏れ、`openclaw.json` の `channels.discord.token` 失効（Reset Token後の更新漏れ）、`Message Content Intent` OFF、`guilds/users` のID不一致、`requireMention` と送信方法の不一致を順に確認 |
 
 ## メリット・デメリット
 
