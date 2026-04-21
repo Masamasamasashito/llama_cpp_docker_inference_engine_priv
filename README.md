@@ -352,15 +352,122 @@ docker-compose down
 
 ## ❓ よくあるトラブル
 
-| 問題 | 原因・対策 |
+### LDIE（llama.cpp）関連
+
+| 問題 | 対策 |
 |---|---|
 | GPU効かない | NVIDIA Container Toolkit未導入 / CUDAバージョン不一致。`nvidia-smi` がDocker内で動くか確認 |
 | モデルロード失敗 | `.env` の `LLAMA_MODEL_FILE` と `models/` 内のファイル名が一致しているか確認 |
-| 応答が遅い | CPU実行になっている可能性。`LLAMA_N_GPU_LAYERS=99` を設定して全レイヤーGPUに |
-| ポートに接続できない | GPU版は `8081`、CPU版は `8082`、High版は `8083` がデフォルト。`docker ps` でポート確認 |
-| 401 Unauthorized | API Key不一致。`.env` の `LLAMA_API_KEY` とリクエストの `Authorization` ヘッダーを確認 |
-| LAN内の他PCから接続不可 | `DOCKER_HOST_BIND_ADDR` がプライベートIPになっているか、ファイアウォールが開いているか確認。Ubuntu再起動後は受信規則の許可IP（RemoteAddress）が最新か確認 |
-| OpenClawのGUIチャットは動くがDiscordだけ無反応 | `openclaw gateway` 再起動漏れ、`openclaw.json` の `channels.discord.token` 失効（Reset Token後の更新漏れ）、`Message Content Intent` OFF、`guilds/users` のID不一致、`requireMention` と送信方法の不一致を順に確認 |
+| 応答が遅い | CPU実行中の可能性。`LLAMA_N_GPU_LAYERS=99` を設定 |
+| ポートに接続できない | GPU版 `8081` / CPU版 `8082` / High版 `8083` がデフォルト。`docker ps` でポート確認 |
+| 401 Unauthorized | API Key不一致。`.env` の `LLAMA_API_KEY` と Authorization ヘッダーを確認 |
+
+### OpenClaw / LAN関連
+
+| 問題 | 対策 |
+|---|---|
+| LAN内の他PCから接続不可 | `DOCKER_HOST_BIND_ADDR` がプライベートIP設定か確認。ファイアウォール受信規則確認。Ubuntu再起動後は受信規則の許可IP（RemoteAddress）を更新 |
+| OpenClaw GUI は動くが応答しない | `openclaw gateway` 確認。`~/.openclaw/openclaw.json` の構文エラー確認 |
+
+### Discord Bot関連
+
+| 問題 | 対策 |
+|---|---|
+| **Bot がオンラインにならない** | [Discord Bot オンライン化チェックリスト](#discord-bot-オンライン化チェックリスト)参照 |
+| **Bot は起動するが反応しない** | Intent 設定確認。ゲートウェイ再起動。`openclaw.json` のサーバーID・ユーザーID 確認 |
+
+---
+
+## Discord Bot オンライン化チェックリスト
+
+Bot がオンラインにならない場合、以下を **上から順に** 確認してください。
+
+### ❶ Bot トークンが失効していないか
+
+`openclaw gateway` を起動した時のログを見て、以下のエラーが出ているか確認：
+
+```
+[Discord.js] Error: Invalid token provided
+[Discord.js] Error: 401 Unauthorized
+```
+
+**出ていた場合 → トークン失効。以下の手順で再発行：**
+
+1. Discord Developer Portal → 対象アプリ → **Bot** → **Reset Token**
+2. 新しいトークンを **Copy** でコピー（二度と表示されません）
+3. `~/.openclaw/openclaw.json` を開き、`channels.discord.token` を新しいトークンで置き換え
+4. ファイル保存 → `openclaw gateway` を再起動
+
+### ❷ Privileged Gateway Intents が有効か
+
+Discord Developer Portal → 対象アプリ → **Bot** → **Privileged Gateway Intents**：
+
+- ✅ **Message Content Intent** → ON？
+- ✅ **Presence Intent** → ON？
+- ✅ **Server Members Intent** → ON？
+
+**1つでも OFF なら ON に切り替えて保存。**
+
+### ❸ `openclaw.json` の設定が正しいか
+
+`~/.openclaw/openclaw.json` を開き、以下を確認：
+
+```json
+{
+  "channels": {
+    "discord": {
+      "enabled": true,                    // true か？
+      "token": "YOUR_LATEST_BOT_TOKEN",   // 最新のトークンか？
+      "groupPolicy": "allowlist",
+      "guilds": {
+        "YOUR_GUILD_ID": {                // サーバーID（数字）か？
+          "requireMention": false,
+          "users": ["YOUR_USER_ID"]       // ユーザーID（数字）か？
+        }
+      }
+    }
+  }
+}
+```
+
+### ❹ `openclaw.json` の JSON 構文は正しいか
+
+```bash
+python3 -c "import json; json.load(open('$HOME/.openclaw/openclaw.json'))" && echo "OK" || echo "ERROR"
+```
+
+ERROR が出たら、テキストエディタで **括弧やカンマ** を確認（特に最後の `}` など）。
+
+### ❺ Bot がサーバーに招待されているか
+
+Discord クライアントを開き、対象サーバーのメンバーリストに Bot が表示されるか確認。
+
+**見えない場合：**
+1. Developer Portal → OAuth2 → URL Generator
+2. SCOPES: `bot` + `applications.commands` をチェック
+3. BOT PERMISSIONS: 必要な権限をチェック（View Channels, Send Messages など）
+4. 生成 URL をコピー → ブラウザで開く → Add to server → Authorize
+
+### ✅ 全チェック完了後
+
+```bash
+# ゲートウェイを再起動
+openclaw gateway
+```
+
+ログに以下が出れば成功：
+```
+[OpenClaw Gateway] Connected to Discord
+[OpenClaw Gateway] Ready as @YourBotName
+```
+
+---
+
+### トークン管理のベストプラクティス
+
+- Reset Token 後、古いトークンを記録している箇所がないか確認（メモ、スクリプト等）
+- トークン値を GitHub にコミットしない
+- トークン漏えいの疑いがあれば、直ちに Reset Token を実行
 
 ## メリット・デメリット
 
