@@ -179,6 +179,8 @@ ip addr show
 ```bash
 # Gemma 4 31B IT の場合
 cp .env.example.gemma4-31b .env
+# Qwen3.6-27B-FP8 の場合
+cp .env.example.qwen36-27b-fp8 .env
 ```
 
 > `.env.example.*` はセクション構造化されています。
