@@ -83,6 +83,7 @@ RTX 5090（VRAM 32GB）をローカルLLM推論に使う際、既存ツールに
 | テキスト生成 LLM | llama.cpp + Docker によるテキスト生成 | [DOCS/text-llm/](DOCS/text-llm/README.md) |
 | OpenClaw連携 | 他PC(Ubuntu)のOpenClawにローカルLLMを提供 | [DOCS/openclaw-integration/](DOCS/openclaw-integration/README.md) |
 | Ubuntu Ready | Ubuntu側のインストールからAPI連携までの完全手順 | [DOCS/ubuntu-ready/](DOCS/ubuntu-ready/README.md) |
+| 文脈エンジン構築 | 機密レベルを分離した Context Engine の設計・運用 | [DOCS/context-engine/README.md](DOCS/context-engine/README.md) |
 
 ### リファレンス
 
